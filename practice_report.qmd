@@ -41,3 +41,11 @@ hist(patients$age,
 
 When you are happy with the result, **commit and sync** your work (the Week 2
 course page walks you through this), then submit your repository link on Canvas.
+
+## My notes
+
+- what i learned today in class
+
+```{r}
+summary(patients)
+```
