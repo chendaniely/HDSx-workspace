@@ -1,0 +1,98 @@
+---
+title: "Assignment 2 Starter Analysis"
+format: html
+---
+
+## Setup
+
+```{r}
+#| message: false
+#| warning: false
+library(tidyverse)  # AI-EDIT(2026-06-23): tidyverse-default — consolidated core library() calls into library(tidyverse)
+```
+
+## Load Data
+
+```{r}
+nhanes <- read_csv("examples/nhanes-equity/data/nhanes_equity_v6.csv", show_col_types = FALSE)
+```
+
+## Inspect
+
+```{r}
+dim(nhanes)
+names(nhanes)
+glimpse(nhanes)
+colSums(is.na(nhanes))
+```
+
+```{r}
+# f(g(x)) 
+# x |> g() |> f()
+nhanes |> is.na() |> colSums()
+nhanes %>% is.na() %>% colSums()
+```
+
+```{r}
+nhanes[nhanes$age >= 65, ]
+```
+
+## Summarize
+
+Replace this example with your own summary if you choose a different question.
+
+```{r}
+bmi_summary <- nhanes |>
+  filter(!is.na(BMI), !is.na(IncomeGroup)) |>
+  group_by(IncomeGroup) |>
+  summarise(
+    n = n(),
+    mean_bmi = mean(BMI),
+    .groups = "drop"
+  )
+
+bmi_summary
+```
+
+## Function
+
+```{r}
+mean_with_n <- function(x) {
+  tibble(
+    n = sum(!is.na(x)),
+    mean = mean(x, na.rm = TRUE)
+  )
+}
+
+mean_with_n(nhanes$BMI)
+```
+
+```{r}
+summarise_column <- function(data, column_name) {
+  values <- data[[column_name]]
+
+  tibble(
+    count = sum(!is.na(values)),
+    missing = sum(is.na(values)),
+    mean = mean(values, na.rm = TRUE),
+    standard_deviation = sd(values, na.rm = TRUE)
+  )
+}
+
+summarise_column(nhanes, "BMI")
+```
+
+```{r}
+summarise_column(nhanes, "Age")
+```
+
+## Save Output
+
+```{r}
+dir.create("assignments/assignment02-r-with-ai/submission/output", recursive = TRUE, showWarnings = FALSE)
+write_csv(bmi_summary, "assignments/assignment02-r-with-ai/submission/output/summary_table.csv")
+```
+
+## AI Audit Note
+
+Add comments explaining which parts were drafted or debugged with AI and how you verified the result.

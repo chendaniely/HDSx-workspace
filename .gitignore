@@ -18,3 +18,5 @@ Thumbs.db
 .env.*
 
 # Required HTML/PDF submissions are intentionally not ignored.
+
+**/*.quarto_ipynb
