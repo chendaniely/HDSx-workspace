@@ -22,3 +22,4 @@ Thumbs.db
 **/*.quarto_ipynb
 
 file*.pdf
+#!file1.pdf # un-ignore file1.pdf
