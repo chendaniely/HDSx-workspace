@@ -16,11 +16,14 @@ if (is.na(nhanes_path)) {
 
 nhanes_analysis <- read_csv(nhanes_path, show_col_types = FALSE)
 
+
 nhanes_analysis |>
+  filter(!is.na(BMI), !is.na(IncomeGroup), Age >= 20, Age <= 80) |>
+  group_by(IncomeGroup) |>
   summarise(
-    rows = n(),
-    missing_bmi = sum(is.na(BMI)),
-    missing_income = sum(is.na(IncomeGroup))
+    n = n(),
+    mean_bmi = round(mean(BMI), 1),
+    .groups = "drop"
   )
 ```
 
