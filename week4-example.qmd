@@ -1,0 +1,26 @@
+---
+---
+
+```{r}
+library(tidyverse)
+
+candidate_paths <- c(
+  "examples/nhanes-equity/data/nhanes_equity_v6.csv",
+  "../../examples/nhanes-equity/data/nhanes_equity_v6.csv"
+)
+
+nhanes_path <- candidate_paths[file.exists(candidate_paths)][1]
+if (is.na(nhanes_path)) {
+  stop("Could not find examples/nhanes-equity/data/nhanes_equity_v6.csv")
+}
+
+nhanes_analysis <- read_csv(nhanes_path, show_col_types = FALSE)
+
+nhanes_analysis |>
+  summarise(
+    rows = n(),
+    missing_bmi = sum(is.na(BMI)),
+    missing_income = sum(is.na(IncomeGroup))
+  )
+```
+
