@@ -32,8 +32,10 @@ health data.
 1. On this repository's GitHub page, click the green **`< > Code`** button →
    **Codespaces** tab → **Create codespace on main**.
 2. Wait a few minutes for the environment to build (R, Quarto, and Python
-   install automatically). You will see a **TOOLCHAIN SELF-TEST** in the
-   terminal when it finishes.
+   install automatically). The terminal shows **SETUP IN PROGRESS** while it
+   works, then a **TOOLCHAIN SELF-TEST** and **SETUP COMPLETE** when it
+   finishes. Wait for SETUP COMPLETE before running any code.
+   <!-- 🤖 AI edit (Claude), 2026-10-20: the setup progress messages in this step. -->
 3. In the file list on the left, open **`practice_report.qmd`**. This root file
    is your Assignment 1 starter.
 4. Save the file, open **View → Command Palette**, and run **Quarto: Render

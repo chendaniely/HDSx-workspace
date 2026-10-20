@@ -17,8 +17,10 @@
   "features": {
     // Quarto CLI (bundles its own pandoc). HTML rendering works immediately.
     // TinyTeX off on purpose: students render HTML, not PDF.
+    // 🤖 AI edit (Claude), 2026-10-20: pinned (was "release") so every
+    // Codespace made this term renders with the same Quarto.
     "ghcr.io/rocker-org/devcontainer-features/quarto-cli:1": {
-      "version": "release",
+      "version": "1.10.19",
       "installTinyTeX": "false"
     },
     // Python 3.11 for the Week 5 polyglot demo.
@@ -29,9 +31,15 @@
 
   "customizations": {
     "vscode": {
+      // 🤖 AI edit (Claude), 2026-10-20: the three version pins below.
+      // An extension installed at a stated version does not auto-update, so
+      // the whole term runs on these releases (no pre-release builds). vscode-R
+      // must match the sess that setup.sh installs from the same release: bump
+      // both together. r-syntax is a dependency vscode-R 3.x pulls in.
       "extensions": [
-        "quarto.quarto",
-        "REditorSupport.r",
+        "quarto.quarto@1.138.0",
+        "REditorSupport.r@3.2.0",
+        "REditorSupport.r-syntax@0.1.4",
         "ms-python.python",
         "ms-toolsai.jupyter",
         "GitHub.copilot",
@@ -50,6 +58,11 @@
         // up blank for the same reason, and its browser tab lands on "Not
         // Found". Rendered files are viewed through port 8000 instead (below).
         "quarto.render.previewType": "none",
+        // 🤖 AI edit (Claude), 2026-10-20: the setting below.
+        // Run Cell goes straight to a plain R terminal. Otherwise vscode-R 3.2
+        // first asks where to run, defaulting to its experimental "R
+        // Interactive" window, which needs the arf console (not installed).
+        "r.interactive.executionTarget": "terminal",
         "editor.formatOnSave": false
       }
     }
