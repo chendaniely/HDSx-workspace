@@ -46,8 +46,11 @@ health data.
    tab inside VS Code. To open a file in your own browser instead (a PDF, or
    slides to present full screen or print), right-click it in the file list
    and choose **Download**.
-   <!-- 🤖 AI edit (Claude), 2026-10-20: the preview tab and Download; the
-   port-8000 browser-tab steps are gone with the server. -->
+   For a PDF, run **Quarto: Render Document** and choose **Render PDF
+   (Typst)**. Typst comes with Quarto, is fast, and keeps characters such as
+   Greek letters and emoji that the LaTeX option can silently drop.
+   <!-- 🤖 AI edit (Claude), 2026-10-20: the preview tab and Download (the
+   port-8000 browser-tab steps are gone with the server), and Typst for PDF. -->
 5. Make the Assignment 1 edits, render again, then commit both
    `practice_report.qmd` and `practice_report.html` and sync your work.
 

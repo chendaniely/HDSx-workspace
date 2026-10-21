@@ -24,7 +24,10 @@
     // 🤖 AI edit (Claude), 2026-10-20: TinyTeX on (was off). "Quarto: Render
     // Document" offers PDF via LaTeX next to HTML, and without TinyTeX that
     // choice failed. Installed as the Codespace user, once, at image build.
-    // PDF via Typst needs nothing extra. smoke-test.sh renders both.
+    // The course's PDF route is Typst (README step 4): built into Quarto,
+    // fast, and it keeps literal Greek and emoji, which LaTeX silently drops
+    // (UBC-MDS/mds-setup-check docs/render-matrix.md). TinyTeX is here so the
+    // LaTeX choice works rather than errors. smoke-test.sh renders both.
     "ghcr.io/rocker-org/devcontainer-features/quarto-cli:1.1.5": {
       "version": "1.10.19",
       "installTinyTeX": "true"
