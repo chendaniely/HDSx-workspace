@@ -3,22 +3,27 @@
 # pushes it to ghcr.io/<repository owner>/hdsx-workspace. Run it by hand:
 # Actions tab -> "Build course image" -> Run workflow. Then copy the digest
 # from the run's summary into "image" in .devcontainer/devcontainer.json.
-# Manual only, so it never runs in students' forks.
+# Manual only, so it never runs on its own (in students' forks or anywhere).
+# Each run and re-run gets its own tag (build-<run>-<attempt>), so a re-run
+# never moves a tag that a pinned digest was taken from. Rebuilds are not
+# byte-identical (newer apt and TinyTeX files), which is why Codespaces pin
+# the digest: keep pinned versions in the registry, don't prune them.
 name: Build course image
 
 on:
   workflow_dispatch:
 
-permissions:
-  contents: read
-  packages: write
+permissions: {}
 
 jobs:
   build:
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      packages: write
     env:
       IMAGE: ghcr.io/${{ github.repository_owner }}/hdsx-workspace
-      TAG: build-${{ github.run_number }}
+      TAG: build-${{ github.run_number }}-${{ github.run_attempt }}
     steps:
       - uses: actions/checkout@v7.0.1
 
@@ -48,9 +53,11 @@ jobs:
   report:
     needs: build
     runs-on: ubuntu-24.04
+    permissions:
+      packages: read
     env:
       IMAGE: ghcr.io/${{ github.repository_owner }}/hdsx-workspace
-      TAG: build-${{ github.run_number }}
+      TAG: build-${{ github.run_number }}-${{ github.run_attempt }}
     steps:
       - uses: docker/login-action@v4.6.0
         with:

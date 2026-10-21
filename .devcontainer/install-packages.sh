@@ -24,7 +24,7 @@ here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 export CRAN_SNAPSHOT="https://p3m.dev/cran/__linux__/noble/2026-07-06"
 if ! grep -q 'CRAN snapshot' "$HOME/.Rprofile" 2>/dev/null; then
   cat >> "$HOME/.Rprofile" <<EOF
-# Added by .devcontainer/setup.sh: install packages from the course's CRAN snapshot.
+# Added by .devcontainer/install-packages.sh: install packages from the course's CRAN snapshot.
 options(repos = c(CRAN = "$CRAN_SNAPSHOT"))
 EOF
 fi
@@ -34,19 +34,24 @@ fi
 # VS Code; vscode-R marks those terminals with SESS_DISCOVERY_FILE. R typed by
 # hand into any other terminal is not connected, and its plots would go to an
 # empty Rplots.pdf. Instead, that R draws off-screen, and after each command
-# that changed the plot, saves it as a PNG and opens it in a VS Code tab, which
-# refreshes in place. No message, no Rplots.pdf. The PNG lives in .r-plots/
+# that started or changed a plot, saves it as a PNG and opens it in a VS Code
+# tab, which refreshes in place. (The plot.new/grid.newpage hooks catch a plot
+# redrawn identically after its tab was closed; the student's own current
+# device is restored after the PNG is written.) No message, no Rplots.pdf. The PNG lives in .r-plots/
 # inside the workspace, because VS Code asks before opening a file from outside
 # it; setup.sh keeps that folder out of commits. Rscript and Quarto renders are
 # not interactive, so they are unaffected.
 if ! grep -q 'show_plots_in_vscode' "$HOME/.Rprofile" 2>/dev/null; then
   cat >> "$HOME/.Rprofile" <<'EOF'
-# Added by .devcontainer/setup.sh: show plots from R started by hand.
+# Added by .devcontainer/install-packages.sh: show plots from R started by hand.
 if (interactive() && Sys.getenv("TERM_PROGRAM") == "vscode" &&
     !nzchar(Sys.getenv("SESS_DISCOVERY_FILE"))) invisible(local({
   plot_dir <- file.path(Sys.getenv("CODESPACE_VSCODE_FOLDER", tempdir()), ".r-plots")
   png_file <- file.path(plot_dir, "Rplot.png")
   shown <- NULL
+  new_page <- FALSE
+  setHook("plot.new", function(...) new_page <<- TRUE)
+  setHook("grid.newpage", function(...) new_page <<- TRUE)
   options(device = function(...) {
     grDevices::pdf(NULL, bg = "white")
     grDevices::dev.control("enable")
@@ -54,12 +59,15 @@ if (interactive() && Sys.getenv("TERM_PROGRAM") == "vscode" &&
   addTaskCallback(function(...) {
     try(if (grDevices::dev.cur() > 1) {
       plot_now <- grDevices::recordPlot()
-      if (length(plot_now[[1]]) && !identical(plot_now[[1]], shown)) {
+      if (length(plot_now[[1]]) && (new_page || !identical(plot_now[[1]], shown))) {
         shown <<- plot_now[[1]]
         dir.create(plot_dir, showWarnings = FALSE)
+        current <- grDevices::dev.cur()
         grDevices::png(png_file, width = 7, height = 5, units = "in", res = 96)
         grDevices::replayPlot(plot_now)
         grDevices::dev.off()
+        grDevices::dev.set(current)
+        new_page <<- FALSE
         system2("code", png_file, wait = FALSE)
       }
     }, silent = TRUE)
@@ -79,7 +87,9 @@ fi
 # inside the pinned release file, unless that exact build is already installed.
 # When bumping "REditorSupport.r@..." in devcontainer.json, bump these three:
 # the version, the sha256sum of the release's r-<version>.vsix, and the
-# Config/vscode-R/source-revision line of the sess DESCRIPTION inside it.
+# Config/vscode-R/source-revision line of the sess DESCRIPTION inside it. Then
+# rebuild the image and re-pin its digest: the image carries sess, and without
+# a rebuild every new Codespace downloads the new sess at creation.
 export VSCODE_R_VERSION=3.2.0
 export VSCODE_R_SHA256=fbfd1dad22c5ab696750d201d4732ce30c032f22265d4efe2b220eb4361efd1e
 export VSCODE_R_SESS_REVISION=git-tree:25da80133148500e2fc25eff593f49674324022e
@@ -117,5 +127,9 @@ Rscript -e '
 '
 
 echo "==> Installing Python packages (Week 5 polyglot / reticulate demo)..."
-python3 -m pip install --quiet "pip==26.1.2"
-python3 -m pip install --quiet -r "$here/requirements.txt" -c "$here/constraints.txt"
+# --disable-pip-version-check: in a prebuilt Codespace everything is already
+# satisfied and pip needs no network, except for its own version check, which
+# could stall setup (and the editor, via waitFor) if PyPI were slow.
+python3 -m pip install --quiet --disable-pip-version-check "pip==26.1.2"
+python3 -m pip install --quiet --disable-pip-version-check \
+  -r "$here/requirements.txt" -c "$here/constraints.txt"

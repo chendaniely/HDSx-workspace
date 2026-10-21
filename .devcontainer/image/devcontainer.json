@@ -5,11 +5,14 @@
   // .github/workflows/build-image.yml builds it once, with everything students
   // need already installed, and pushes it to ghcr.io/<owner>/hdsx-workspace.
   // .devcontainer/devcontainer.json then starts every Codespace from that
-  // image, so nothing is compiled or downloaded while a student waits.
+  // image, so nothing is compiled or installed while a student waits.
   //
-  // To change a version: edit it here (or in install-packages.sh /
-  // constraints.txt), run the workflow, and put the new digest from the run's
-  // summary into "image" in .devcontainer/devcontainer.json.
+  // To change a version: edit it here (or in install-packages.sh, or
+  // requirements.txt/constraints.txt), run the workflow, and put the new
+  // digest from the run's summary into "image" in
+  // .devcontainer/devcontainer.json. Extension pins live in
+  // .devcontainer/devcontainer.json alone and need no rebuild, except
+  // vscode-R, whose sess comes from this image.
   // ---------------------------------------------------------------------------
 
   // rocker "tidyverse": R + the whole tidyverse + the system libraries

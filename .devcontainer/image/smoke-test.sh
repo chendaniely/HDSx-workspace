@@ -2,8 +2,10 @@
 # -----------------------------------------------------------------------------
 # 🤖 AI edit (Claude), 2026-10-20: this file.
 # Runs inside the freshly built course image, from the repository root, before
-# the build workflow pushes it. Any failure stops the push. Expected versions
-# are read from the files that pin them, so bumping a pin needs no edit here.
+# the build workflow pushes it. Any failure stops the push. The sess revision,
+# the CRAN snapshot, the R package list and the Python pins are read from the
+# files that set them, so changing those needs no edit here. R, Quarto and
+# Python versions are printed for the log; the image recipe pins them.
 # -----------------------------------------------------------------------------
 set -uo pipefail
 fail=0
@@ -15,16 +17,26 @@ echo "R:      $(R --version | head -n 1)"
 echo "Quarto: $(quarto --version)"
 echo "Python: $(python3 --version)"
 
-sess_revision=$(grep -oE 'VSCODE_R_SESS_REVISION=[^ ]+' .devcontainer/install-packages.sh | cut -d= -f2)
-export sess_revision
+installer=.devcontainer/install-packages.sh
+sess_revision=$(grep -oE 'VSCODE_R_SESS_REVISION=[^ ]+' "$installer" | cut -d= -f2)
+cran_snapshot=$(grep -oE 'CRAN_SNAPSHOT="[^"]+"' "$installer" | cut -d'"' -f2)
+r_extras=$(grep -oE 'pkgs <- c\([^)]*\)' "$installer")
+export sess_revision cran_snapshot r_extras
 check "sess is the build from the pinned vscode-R release" \
   'Rscript -e "stopifnot(identical(packageDescription(\"sess\", fields = \"Config/vscode-R/source-revision\"), Sys.getenv(\"sess_revision\")))"'
 check "course R packages load" \
-  'Rscript -e "for (p in c(\"tidyverse\", \"knitr\", \"gt\", \"gtsummary\", \"DT\", \"janitor\", \"scales\", \"plotly\", \"shiny\", \"reticulate\", \"sess\")) suppressPackageStartupMessages(library(p, character.only = TRUE))"'
+  'Rscript -e "eval(parse(text = Sys.getenv(\"r_extras\"))); for (p in c(\"tidyverse\", \"knitr\", \"sess\", pkgs)) suppressPackageStartupMessages(library(p, character.only = TRUE))"'
 check "install.packages() uses the CRAN snapshot" \
-  'Rscript -e "stopifnot(grepl(\"/cran/__linux__/noble/[0-9-]+$\", getOption(\"repos\")[[\"CRAN\"]]))"'
+  'Rscript -e "stopifnot(identical(getOption(\"repos\")[[\"CRAN\"]], Sys.getenv(\"cran_snapshot\")))"'
 check "the R profile shows plots from R started by hand" \
   'grep -q show_plots_in_vscode "$HOME/.Rprofile"'
+# vscode-R sources ~/.Rprofile before it connects sess, so an error there would
+# cost Run Cell its connection. Start R the way both kinds of VS Code terminal
+# do and fail on any startup error.
+check "R starts cleanly in a terminal R was typed into" \
+  'out=$(printf "cat(\"R-STARTED\\\\n\")\\n" | TERM_PROGRAM=vscode R --quiet --interactive --no-save 2>&1); grep -q R-STARTED <<<"$out" && ! grep -qi error <<<"$out"'
+check "R starts cleanly in a Run Cell terminal" \
+  'out=$(printf "cat(\"R-STARTED\\\\n\")\\n" | TERM_PROGRAM=vscode SESS_DISCOVERY_FILE=/nonexistent R --quiet --interactive --no-save 2>&1); grep -q R-STARTED <<<"$out" && ! grep -qi error <<<"$out"'
 check "Python packages match constraints.txt" 'python3 - <<EOF
 import re, importlib.metadata as md
 bad = []

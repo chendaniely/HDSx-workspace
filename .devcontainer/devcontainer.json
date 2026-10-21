@@ -4,8 +4,8 @@
   //
   // This is the small starter project students FORK in Week 2. Forking it and
   // opening a Codespace gives every student R, Quarto, Python, and the right
-  // VS Code extensions automatically -- nothing to install by hand. It mirrors
-  // the environment used by the HDSx course book so renders behave the same way.
+  // VS Code extensions automatically -- nothing to install by hand. It starts
+  // from the HDSx course book's setup, with every version pinned for the term.
   // (The HDSx book is a separate, read-only repository; students work HERE.)
   // ---------------------------------------------------------------------------
   "name": "SPPH 381H workspace (R + Quarto + Python)",
@@ -16,19 +16,22 @@
   // (Typst built in), TinyTeX, Python 3.11.17, sess, and every course package
   // already installed, built once by .github/workflows/build-image.yml from
   // .devcontainer/image/. Starting from it skips the ~6-minute build (mostly
-  // compiling Python) and every install-time download. Pinned by digest: to
-  // change any version, edit .devcontainer/image/ or install-packages.sh, run
-  // the workflow, and paste the digest from its summary here.
+  // compiling Python) and installs nothing at Codespace creation. Pinned by
+  // digest: to change any version, edit .devcontainer/image/,
+  // install-packages.sh, or requirements.txt/constraints.txt, run the
+  // workflow, and paste the digest from its summary here.
   "image": "ghcr.io/chendaniely/hdsx-workspace@sha256:c7b56535082228c72533359e422102e344b49590b5220fa9e3e2ac845e4856b4",
 
   "customizations": {
     "vscode": {
-      // 🤖 AI edit (Claude), 2026-10-20: the four version pins below.
-      // An extension installed at a stated version does not auto-update, so
-      // the whole term runs on these releases (no pre-release builds). vscode-R
-      // must match the sess that install-packages.sh installs from the same
-      // release: bump both together. r-syntax is a dependency vscode-R 3.x
-      // pulls in.
+      // 🤖 AI edit (Claude), 2026-10-20: the five version pins below.
+      // An extension installed at a stated version does not auto-update, and
+      // it wins over the unpinned copy the image's own metadata asks for
+      // (checked in fresh Codespaces), so the whole term runs on these
+      // releases (no pre-release builds). vscode-R must match the sess that
+      // install-packages.sh installs from the same release: bump both
+      // together, then rebuild the image, which carries sess. r-syntax is a
+      // dependency vscode-R 3.x pulls in.
       // The Python, Jupyter and Copilot extensions stay unpinned on purpose:
       // they use VS Code's proposed APIs, which change between VS Code
       // releases, and Codespaces always runs the newest VS Code, so an old
@@ -77,8 +80,9 @@
         //   for, and opens nothing at all.
         // Rendered HTML is viewed in a preview tab (the viewer extension
         // above) instead; anything else (PDFs, slides to present or print)
-        // via right-click -> Download. A browser tab on the preview port does
-        // live-reload, if a student opens it by hand.
+        // via right-click -> Download. (A browser tab on the preview port does
+        // live-reload, but no port is forwarded (otherPortsAttributes below)
+        // and the port changes with every preview.)
         "quarto.render.previewType": "none",
         // 🤖 AI edit (Claude), 2026-10-20: the setting below.
         // Run Cell goes straight to a plain R terminal. Otherwise vscode-R 3.2
@@ -90,13 +94,16 @@
     }
   },
 
-  // Runs once after the container is built. Installs the few extra packages and
-  // self-tests the toolchain. The leading sed strips stray carriage returns so
-  // the script runs even if the file was copied without git's eol=lf handling.
+  // Runs once after the container is built. Checks the course packages (the
+  // image already has them; anything added to the lists since the image was
+  // built installs here) and self-tests the toolchain. The leading sed strips
+  // stray carriage returns so the scripts run even if a file was copied
+  // without git's line-ending normalization (.gitattributes).
   "postCreateCommand": "sed -i 's/\\r$//' .devcontainer/setup.sh .devcontainer/install-packages.sh && bash .devcontainer/setup.sh",
   // 🤖 AI edit (Claude), 2026-10-20: this setting.
   // Keep the editor closed until setup.sh finishes (seconds with the course
-  // image), so no one can start R before its packages and sess are in.
+  // image; longer only if the package lists are newer than the image), so no
+  // one can start R before its packages and sess are in.
   "waitFor": "postCreateCommand",
 
   // 🤖 AI edit (Claude), 2026-10-20: this setting, and the removal of the
@@ -105,8 +112,8 @@
   // it in a tab, and right-click -> Download covers PDFs and slides to present
   // or print, so the server, its terminal, and its "Make Public" risk (it
   // served the whole workspace, .git included) are gone.
-  // Every Render starts a quarto preview server on a random port, and R opens
-  // ports of its own. Forwarded, each one pops up "Your application ... is
+  // The Preview button (quarto preview) starts a server on a random port, and
+  // R opens ports of its own. Forwarded, each one pops up "Your application ... is
   // available" (with "Make Public", which would expose the workspace) and
   // adds a Ports-tab row whose globe icon lands on "Not Found" or a blank
   // page. Nothing students use needs them, so no port is forwarded.

@@ -2,37 +2,34 @@
 # -----------------------------------------------------------------------------
 # SPPH 381H student-workspace Codespace post-create setup.
 #
-# Installs the few packages NOT already in the rocker tidyverse image (via
-# install-packages.sh), then runs a self-test so you can see at a glance what
-# works. We deliberately do NOT use `set -e`: if one optional package fails,
-# the rest of setup should
-# still finish and the self-test should still print, so the failure is visible
-# instead of silently aborting the whole container build.
+# Checks the course packages via install-packages.sh (the course image already
+# has them, so this takes seconds), then runs a self-test so you can see at a
+# glance what works. We deliberately do NOT use `set -e`: if one optional
+# package fails, the rest of setup should still finish and the self-test should
+# still print, so the failure is visible instead of silently cutting setup
+# short.
 # -----------------------------------------------------------------------------
 set -uo pipefail
 
 # 🤖 AI edit (Claude), 2026-10-20: this block and the SETUP COMPLETE lines.
 # "waitFor" in devcontainer.json keeps the editor closed until this script
-# ends. Say where it is anyway, here and at the end, and warn in any
-# interactive R started before the end: ~/.Rprofile warns while the marker
-# file exists. An interrupted setup keeps the marker, so if the editor opens
-# on an incomplete Codespace, it keeps warning.
+# ends, and the script always reaches its end (no `set -e`), so the marker file
+# only survives a setup that was killed part way. ~/.Rprofile then warns in
+# every interactive R, so that incomplete Codespace does not fail silently.
 SETUP_MARKER="$HOME/.codespace-setup-running"
 touch "$SETUP_MARKER"
 if ! grep -q 'codespace-setup-running' "$HOME/.Rprofile" 2>/dev/null; then
   cat >> "$HOME/.Rprofile" <<'EOF'
-# Added by .devcontainer/setup.sh: warn while the Codespace is still installing.
+# Added by .devcontainer/setup.sh: warn if the Codespace setup did not finish.
 if (interactive() && file.exists("~/.codespace-setup-running")) {
-  message("\n⏳ The Codespace is still installing. Some packages may be missing, and\n",
-          "   plots may not reach VS Code, until the setup terminal says SETUP COMPLETE.\n",
-          "   Then close this R terminal (trash-can icon) and run your code again.\n")
+  message("\n⚠️  This Codespace's setup did not finish, so some packages may be missing.\n",
+          "   Rebuild it (Command Palette > Codespaces: Rebuild Container), or ask\n",
+          "   the instructor for help.\n")
 }
 EOF
 fi
 echo "=========================================================="
-echo "⏳ SETUP IN PROGRESS: installing packages (a few minutes)."
-echo "   Wait for SETUP COMPLETE at the end of this log before"
-echo "   running code."
+echo "⏳ SETUP IN PROGRESS: checking the course packages (seconds)."
 echo "=========================================================="
 
 # 🤖 AI edit (Claude), 2026-10-20: this block (the installs moved to
@@ -63,5 +60,5 @@ echo "=========================================================="
 rm -f "$SETUP_MARKER"
 echo "✅ SETUP COMPLETE. If every section above printed a version with"
 echo "no error, the environment is ready. If something failed, copy this"
-echo "whole log and send it to the instructor so it can be fixed. Close"
-echo "any R terminal opened before this message, then run your code again."
+echo "whole log (Codespaces: View Creation Log) and send it to the"
+echo "instructor so it can be fixed."

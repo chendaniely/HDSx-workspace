@@ -31,16 +31,17 @@ health data.
 
 1. On this repository's GitHub page, click the green **`< > Code`** button →
    **Codespaces** tab → **Create codespace on main**.
-2. Wait about 10 minutes while the environment builds (R, Quarto, and Python
-   install automatically). The editor opens only once everything is
-   installed, so you can start as soon as you see it.
+2. Wait about 5 minutes while the Codespace starts. R, Quarto, and Python come
+   preinstalled, and the editor opens only once everything is ready, so you
+   can start as soon as you see it.
    <!-- 🤖 AI edit (Claude), 2026-10-20: this step. -->
 3. In the file list on the left, open **`practice_report.qmd`**. This root file
    is your Assignment 1 starter.
-4. Save the file, open **View → Command Palette**, and run **Quarto: Render
-   Document**. (If a **Render** button appears at the top-right of the editor,
-   it does the same thing.) To see the result, click `practice_report.html` in
-   the file list on the left: it opens in a preview tab inside VS Code. It
+4. Save the file, open **View → Command Palette**, run **Quarto: Render
+   Document**, and choose **Render HTML**. (The **Preview** button at the
+   top-right of the editor renders it too, without that menu.) To see the
+   result, click `practice_report.html` in the file list on the left: it
+   opens in a preview tab inside VS Code. It
    should show a chart with no red error messages. After each render, close
    that tab and click the file again. Plots from **Run Cell** appear in a plot
    tab inside VS Code. To open a file in your own browser instead (a PDF, or
@@ -67,10 +68,12 @@ source, outputs, and rendered files requested by the assignment.
 
 The Codespace is the course dependency baseline. Its R package list is in
 `.devcontainer/install-packages.sh`; its Python packages are declared in
-`.devcontainer/requirements.txt`. Every version is pinned for the term, so a
-Codespace made in December matches one made today: R packages come from a dated
-CRAN snapshot (also what `install.packages()` uses inside the Codespace), and
-Python versions are fixed in `.devcontainer/constraints.txt`. Do not initialize
+`.devcontainer/requirements.txt`. Every package version is pinned for the
+term, so a Codespace made in December matches one made today: R packages come
+from a dated CRAN snapshot (also what `install.packages()` uses inside the
+Codespace, so packages released after that date are not available; ask the
+instructor if you need one), and Python versions are fixed in
+`.devcontainer/constraints.txt`. Do not initialize
 `renv`. If you add a package with instructor approval, document it in the
 assignment dependency note and update the appropriate devcontainer list so a
 fresh Codespace can install it.
