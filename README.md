@@ -69,7 +69,7 @@ Do not add a global `*.html` or `*.pdf` rule to `.gitignore`. Stage only the
 source, outputs, and rendered files requested by the assignment.
 
 The Codespace is the course dependency baseline. Its R package list is in
-`.devcontainer/setup.sh`; its Python packages are declared in
+`.devcontainer/install-packages.sh`; its Python packages are declared in
 `.devcontainer/requirements.txt`. Every version is pinned for the term, so a
 Codespace made in December matches one made today: R packages come from a dated
 CRAN snapshot (also what `install.packages()` uses inside the Codespace), and

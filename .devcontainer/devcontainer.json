@@ -14,8 +14,8 @@
   // students need, so renders work out of the box.
   // 🤖 AI edit (Claude), 2026-10-20: pinned by digest (was ":4", which moves
   // whenever rocker publishes a new R release). This is the R 4.6.1 image
-  // built 2026-07-06. setup.sh installs extra R packages from the CRAN
-  // snapshot of that same date: bump the two together.
+  // built 2026-07-06. install-packages.sh installs extra R packages from the
+  // CRAN snapshot of that same date: bump the two together.
   "image": "ghcr.io/rocker-org/devcontainer/tidyverse@sha256:3a9ecbed900f17da528cdb17c3ddc43045fc9b4be7dbd8c61cb7b8a6439bfa6b",
 
   // 🤖 AI edit (Claude), 2026-10-20: each feature pinned to an exact release
@@ -45,8 +45,9 @@
       // 🤖 AI edit (Claude), 2026-10-20: the four version pins below.
       // An extension installed at a stated version does not auto-update, so
       // the whole term runs on these releases (no pre-release builds). vscode-R
-      // must match the sess that setup.sh installs from the same release: bump
-      // both together. r-syntax is a dependency vscode-R 3.x pulls in.
+      // must match the sess that install-packages.sh installs from the same
+      // release: bump both together. r-syntax is a dependency vscode-R 3.x
+      // pulls in.
       // The Python, Jupyter and Copilot extensions stay unpinned on purpose:
       // they use VS Code's proposed APIs, which change between VS Code
       // releases, and Codespaces always runs the newest VS Code, so an old
@@ -96,7 +97,7 @@
   // Runs once after the container is built. Installs the few extra packages and
   // self-tests the toolchain. The leading sed strips stray carriage returns so
   // the script runs even if the file was copied without git's eol=lf handling.
-  "postCreateCommand": "sed -i 's/\\r$//' .devcontainer/setup.sh && bash .devcontainer/setup.sh",
+  "postCreateCommand": "sed -i 's/\\r$//' .devcontainer/setup.sh .devcontainer/install-packages.sh && bash .devcontainer/setup.sh",
   // 🤖 AI edit (Claude), 2026-10-20: this setting.
   // Keep the editor closed until setup.sh finishes (about 4 minutes, after the
   // image build), so no one can start R before its packages and sess are in.
