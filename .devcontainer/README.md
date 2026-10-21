@@ -44,7 +44,14 @@ The commit messages on this folder record each decision and its reasons.
   Reopening an existing Codespace is much faster (a stopped one came back in
   about 30 s). Without the image, a new Codespace took about 9 minutes.
 - **Trust prompt:** VS Code asks "Do you trust the authors of the files in this
-  folder?" on first open. No repo-level way to turn it off was found.
+  folder?" on first open. No repo-level way to turn it off was found. Until it
+  is answered, the bottom bar says "Restricted Mode" and extensions are limited.
+- **Ready signals** (README step 2): the packages are in place when the editor
+  opens (`waitFor`); extensions finish loading a few seconds later, inside VS
+  Code, so setup can't announce it. Ready means: trust answered, "Activating
+  Extensions…" gone from the bottom bar, the Quarto status item showing its
+  version, and Run Cell links above R chunks in a `.qmd`. The first Run Cell
+  prints `[sess] Connected to VS Code`.
 - **Rendering:** *Quarto: Render Document* opens a menu (Render HTML, PDF via
   Typst, PDF via LaTeX, MS Word). The **Preview** button renders the document's
   own format without the menu. Right after the editor opens, the first render

@@ -32,9 +32,20 @@ health data.
 1. On this repository's GitHub page, click the green **`< > Code`** button →
    **Codespaces** tab → **Create codespace on main**.
 2. Wait about 5 minutes while the Codespace starts. R, Quarto, and Python come
-   preinstalled, and the editor opens only once everything is ready, so you
-   can start as soon as you see it.
-   <!-- 🤖 AI edit (Claude), 2026-10-20: this step. -->
+   preinstalled, and the editor opens once they are. VS Code then takes a few
+   more seconds to load its tools. It's ready when:
+   - you've answered the **"Do you trust the authors of the files in this
+     folder?"** box with **Trust Folder & Continue** (until then the bottom bar
+     says **Restricted Mode** and the Quarto and R tools stay switched off);
+   - the bottom bar no longer says **Activating Extensions…** and shows
+     **Quarto** with a version number;
+   - in a `.qmd` file, **Run Cell** appears above each R code chunk.
+
+   If that hasn't happened after a couple of minutes, open **View → Command
+   Palette**, run **Codespaces: View Creation Log**, and send the log to the
+   instructor.
+   <!-- 🤖 AI edit (Claude), 2026-10-20/21: this step and its readiness
+   checks. -->
 3. In the file list on the left, open **`practice_report.qmd`**. This root file
    is your Assignment 1 starter.
 4. Save the file, open **View → Command Palette**, run **Quarto: Render
