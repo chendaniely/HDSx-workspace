@@ -56,18 +56,25 @@ fi
 # VS Code; vscode-R marks those terminals with SESS_DISCOVERY_FILE. R typed by
 # hand into any other terminal is not connected, and its plots would go to an
 # empty Rplots.pdf. Instead, that R draws off-screen, and after each command
-# that changed the plot, saves it as a PNG and opens it in a VS Code tab. No
-# message, no Rplots.pdf. Rscript and Quarto renders are not interactive, so
+# that changed the plot, saves it as a PNG and opens it in a VS Code tab, which
+# refreshes in place. No message, no Rplots.pdf. The PNG lives in .r-plots/
+# inside the workspace, because VS Code asks before opening a file from outside
+# it; .git/info/exclude keeps that folder out of commits without touching the
+# student's .gitignore. Rscript and Quarto renders are not interactive, so
 # they are unaffected.
+if [ -d .git ] && ! grep -qx '/.r-plots/' .git/info/exclude 2>/dev/null; then
+  echo '/.r-plots/' >> .git/info/exclude
+fi
 if ! grep -q 'show_plots_in_vscode' "$HOME/.Rprofile" 2>/dev/null; then
   cat >> "$HOME/.Rprofile" <<'EOF'
 # Added by .devcontainer/setup.sh: show plots from R started by hand.
 if (interactive() && Sys.getenv("TERM_PROGRAM") == "vscode" &&
-    !nzchar(Sys.getenv("SESS_DISCOVERY_FILE"))) local({
-  png_file <- file.path(tempdir(), "Rplot.png")
+    !nzchar(Sys.getenv("SESS_DISCOVERY_FILE"))) invisible(local({
+  plot_dir <- file.path(Sys.getenv("CODESPACE_VSCODE_FOLDER", tempdir()), ".r-plots")
+  png_file <- file.path(plot_dir, "Rplot.png")
   shown <- NULL
   options(device = function(...) {
-    grDevices::pdf(NULL)
+    grDevices::pdf(NULL, bg = "white")
     grDevices::dev.control("enable")
   })
   addTaskCallback(function(...) {
@@ -75,6 +82,7 @@ if (interactive() && Sys.getenv("TERM_PROGRAM") == "vscode" &&
       plot_now <- grDevices::recordPlot()
       if (length(plot_now[[1]]) && !identical(plot_now[[1]], shown)) {
         shown <<- plot_now[[1]]
+        dir.create(plot_dir, showWarnings = FALSE)
         grDevices::png(png_file, width = 7, height = 5, units = "in", res = 96)
         grDevices::replayPlot(plot_now)
         grDevices::dev.off()
@@ -83,7 +91,7 @@ if (interactive() && Sys.getenv("TERM_PROGRAM") == "vscode" &&
     }, silent = TRUE)
     TRUE
   }, name = "show_plots_in_vscode")
-})
+}))
 EOF
 fi
 
