@@ -20,7 +20,7 @@
   // digest: to change any version, edit .devcontainer/image/,
   // install-packages.sh, or requirements.txt/constraints.txt, run the
   // workflow, and paste the digest from its summary here.
-  "image": "ghcr.io/chendaniely/hdsx-workspace@sha256:c7b56535082228c72533359e422102e344b49590b5220fa9e3e2ac845e4856b4",
+  "image": "ghcr.io/chendaniely/hdsx-workspace@sha256:5ef00ad78e12d8d58ad00c9a0b5545b436bfc2ac33db9c45d1df9ebb2d75373e",
 
   "customizations": {
     "vscode": {
