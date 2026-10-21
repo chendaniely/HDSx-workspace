@@ -1,0 +1,40 @@
+{
+  // ---------------------------------------------------------------------------
+  // 🤖 AI edit (Claude), 2026-10-20: this file.
+  // Build recipe for the SPPH 381H course image, not a Codespace config.
+  // .github/workflows/build-image.yml builds it once, with everything students
+  // need already installed, and pushes it to ghcr.io/<owner>/hdsx-workspace.
+  // .devcontainer/devcontainer.json then starts every Codespace from that
+  // image, so nothing is compiled or downloaded while a student waits.
+  //
+  // To change a version: edit it here (or in install-packages.sh /
+  // constraints.txt), run the workflow, and put the new digest from the run's
+  // summary into "image" in .devcontainer/devcontainer.json.
+  // ---------------------------------------------------------------------------
+
+  // rocker "tidyverse": R + the whole tidyverse + the system libraries
+  // students need. Pinned by digest (":4" moves whenever rocker publishes a new
+  // R release): the R 4.6.1 image built 2026-07-06. install-packages.sh takes
+  // extra R packages from the CRAN snapshot of that same date: bump together.
+  "image": "ghcr.io/rocker-org/devcontainer/tidyverse@sha256:3a9ecbed900f17da528cdb17c3ddc43045fc9b4be7dbd8c61cb7b8a6439bfa6b",
+
+  // Each feature pinned to an exact release.
+  "features": {
+    // Quarto CLI (bundles its own pandoc and Typst). TinyTeX off on purpose:
+    // students render HTML, not PDF.
+    "ghcr.io/rocker-org/devcontainer-features/quarto-cli:1.1.5": {
+      "version": "1.10.19",
+      "installTinyTeX": "false"
+    },
+    // Python for the Week 5 polyglot demo. On this base image the feature
+    // compiles CPython from source (about 4 minutes), which is the main reason
+    // to build the image once instead of in every Codespace. installTools off:
+    // the feature's linters (pylint, black, ...) are unused in the course.
+    "ghcr.io/devcontainers/features/python:1.8.0": {
+      "version": "3.11.17",
+      "installTools": false
+    },
+    // R packages, sess and Python packages: runs ../install-packages.sh.
+    "./course-packages": {}
+  }
+}

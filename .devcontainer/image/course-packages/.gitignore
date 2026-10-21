@@ -1,0 +1,5 @@
+# Copied in from .devcontainer/ by the build workflow; the originals are the
+# ones to edit.
+install-packages.sh
+requirements.txt
+constraints.txt

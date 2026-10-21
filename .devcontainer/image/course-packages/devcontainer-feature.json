@@ -1,0 +1,10 @@
+{
+  "id": "course-packages",
+  "version": "1.0.0",
+  "name": "SPPH 381H course packages",
+  "description": "Runs .devcontainer/install-packages.sh: R packages from the course's CRAN snapshot, sess from the pinned vscode-R release, pinned Python packages, and the ~/.Rprofile settings.",
+  "installsAfter": [
+    "ghcr.io/devcontainers/features/python",
+    "ghcr.io/rocker-org/devcontainer-features/quarto-cli"
+  ]
+}

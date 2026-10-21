@@ -2,9 +2,10 @@
 # -----------------------------------------------------------------------------
 # SPPH 381H student-workspace Codespace post-create setup.
 #
-# Installs the few packages NOT already in the rocker tidyverse image, then
-# runs a self-test so you can see at a glance what works. We deliberately do
-# NOT use `set -e`: if one optional package fails, the rest of setup should
+# Installs the few packages NOT already in the rocker tidyverse image (via
+# install-packages.sh), then runs a self-test so you can see at a glance what
+# works. We deliberately do NOT use `set -e`: if one optional package fails,
+# the rest of setup should
 # still finish and the self-test should still print, so the failure is visible
 # instead of silently aborting the whole container build.
 # -----------------------------------------------------------------------------
@@ -34,110 +35,19 @@ echo "   Wait for SETUP COMPLETE at the end of this log before"
 echo "   running code."
 echo "=========================================================="
 
-# 🤖 AI edit (Claude), 2026-10-20: this block and every use of CRAN_SNAPSHOT.
-# R packages come from Posit's CRAN snapshot of the day the base image was
-# built (see "image" in devcontainer.json), so a Codespace made in December
-# gets the same versions as one made today, all of them consistent with the
-# tidyverse already in the image. The snapshot serves Linux binaries, so
-# nothing compiles. ~/.Rprofile points install.packages() at it too, so a
-# package a student adds matches the ones already installed. Python packages
-# are pinned by constraints.txt, resolved for the same date. Bump all three
-# together.
-export CRAN_SNAPSHOT="https://p3m.dev/cran/__linux__/noble/2026-07-06"
-if ! grep -q 'CRAN snapshot' "$HOME/.Rprofile" 2>/dev/null; then
-  cat >> "$HOME/.Rprofile" <<EOF
-# Added by .devcontainer/setup.sh: install packages from the course's CRAN snapshot.
-options(repos = c(CRAN = "$CRAN_SNAPSHOT"))
-EOF
-fi
+# 🤖 AI edit (Claude), 2026-10-20: this block (the installs moved to
+# install-packages.sh, which the course image's build also runs).
+# In a Codespace made from the course image everything is already installed,
+# so this finishes in seconds.
+bash .devcontainer/install-packages.sh
 
 # 🤖 AI edit (Claude), 2026-10-20: this block.
-# Only R started by vscode-R (Run Cell, or "R: Create R Terminal") connects to
-# VS Code; vscode-R marks those terminals with SESS_DISCOVERY_FILE. R typed by
-# hand into any other terminal is not connected, and its plots would go to an
-# empty Rplots.pdf. Instead, that R draws off-screen, and after each command
-# that changed the plot, saves it as a PNG and opens it in a VS Code tab, which
-# refreshes in place. No message, no Rplots.pdf. The PNG lives in .r-plots/
-# inside the workspace, because VS Code asks before opening a file from outside
-# it; .git/info/exclude keeps that folder out of commits without touching the
-# student's .gitignore. Rscript and Quarto renders are not interactive, so
-# they are unaffected.
+# R typed by hand saves its plots to .r-plots/ in the workspace (see
+# install-packages.sh). Keep that folder out of commits without touching the
+# student's .gitignore, so syncing the fork never conflicts.
 if [ -d .git ] && ! grep -qx '/.r-plots/' .git/info/exclude 2>/dev/null; then
   echo '/.r-plots/' >> .git/info/exclude
 fi
-if ! grep -q 'show_plots_in_vscode' "$HOME/.Rprofile" 2>/dev/null; then
-  cat >> "$HOME/.Rprofile" <<'EOF'
-# Added by .devcontainer/setup.sh: show plots from R started by hand.
-if (interactive() && Sys.getenv("TERM_PROGRAM") == "vscode" &&
-    !nzchar(Sys.getenv("SESS_DISCOVERY_FILE"))) invisible(local({
-  plot_dir <- file.path(Sys.getenv("CODESPACE_VSCODE_FOLDER", tempdir()), ".r-plots")
-  png_file <- file.path(plot_dir, "Rplot.png")
-  shown <- NULL
-  options(device = function(...) {
-    grDevices::pdf(NULL, bg = "white")
-    grDevices::dev.control("enable")
-  })
-  addTaskCallback(function(...) {
-    try(if (grDevices::dev.cur() > 1) {
-      plot_now <- grDevices::recordPlot()
-      if (length(plot_now[[1]]) && !identical(plot_now[[1]], shown)) {
-        shown <<- plot_now[[1]]
-        dir.create(plot_dir, showWarnings = FALSE)
-        grDevices::png(png_file, width = 7, height = 5, units = "in", res = 96)
-        grDevices::replayPlot(plot_now)
-        grDevices::dev.off()
-        system2("code", png_file, wait = FALSE)
-      }
-    }, silent = TRUE)
-    TRUE
-  }, name = "show_plots_in_vscode")
-}))
-EOF
-fi
-
-# 🤖 AI edit (Claude), 2026-09-29, revised 2026-10-20: this block, its place
-# first in the script, and the sess self-test line.
-# sess connects R terminals to the VS Code R extension, which is how plots and
-# View() reach the editor. vscode-R 3.2+ accepts only the sess built from its own
-# release. Any other copy gets an easily missed "Install bundled sess" pop-up,
-# and until someone clicks it, plots silently go to Rplots.pdf. r-universe builds
-# from vscode-R's main branch, which drifts from the release, so install the copy
-# inside the pinned release file. It goes first so plots reach VS Code within
-# seconds, not after the slow package builds below. When bumping
-# "REditorSupport.r@..." in devcontainer.json, bump VSCODE_R_VERSION and its
-# checksum (sha256sum of the release's r-<version>.vsix) here too.
-export VSCODE_R_VERSION=3.2.0
-export VSCODE_R_SHA256=fbfd1dad22c5ab696750d201d4732ce30c032f22265d4efe2b220eb4361efd1e
-echo "==> Installing sess from vscode-R ${VSCODE_R_VERSION} (sends plots from R to VS Code)..."
-Rscript -e '
-  version <- Sys.getenv("VSCODE_R_VERSION")
-  vsix <- tempfile(fileext = ".vsix")
-  download.file(sprintf("https://github.com/REditorSupport/vscode-R/releases/download/v%s/r-%s.vsix",
-                        version, version), vsix, mode = "wb", quiet = TRUE)
-  stopifnot("vscode-R release file failed its checksum" =
-              tools::sha256sum(vsix) == Sys.getenv("VSCODE_R_SHA256"))
-  bundled <- "extension/dist/resources/sess/"
-  unzip(vsix, files = grep(paste0("^", bundled), unzip(vsix, list = TRUE)$Name, value = TRUE),
-        exdir = tempdir())
-  pkg <- file.path(tempdir(), bundled)
-  imports <- strsplit(read.dcf(file.path(pkg, "DESCRIPTION"), "Imports"), ",")[[1]]
-  need <- setdiff(trimws(sub("[(].*", "", imports)), rownames(installed.packages()))
-  if (length(need)) install.packages(need, repos = Sys.getenv("CRAN_SNAPSHOT"))
-  install.packages(pkg, repos = NULL, type = "source")
-'
-
-echo "==> Installing extra R packages (Table 1, dashboards, optional demos)..."
-Rscript -e '
-  pkgs <- c("gt", "gtsummary", "DT", "janitor", "scales", "plotly", "shiny", "reticulate")
-  need <- setdiff(pkgs, rownames(installed.packages()))
-  if (length(need)) install.packages(need, repos = Sys.getenv("CRAN_SNAPSHOT"))
-  have <- intersect(pkgs, rownames(installed.packages()))
-  cat("R extras present:", paste(have, collapse = ", "), "\n")
-'
-
-echo "==> Installing Python packages (Week 5 polyglot / reticulate demo)..."
-python3 -m pip install "pip==26.1.2" >/dev/null
-python3 -m pip install -r .devcontainer/requirements.txt -c .devcontainer/constraints.txt
 
 echo ""
 echo "=================== TOOLCHAIN SELF-TEST ==================="
