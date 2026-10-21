@@ -12,14 +12,14 @@
 
   // 🤖 AI edit (Claude), 2026-10-20: this "image" (was the rocker image plus
   // the Quarto and Python features, built in every new Codespace).
-  // The course image: rocker's R 4.6.1 tidyverse image with Quarto 1.10.19,
-  // Python 3.11.17, sess, and every course package already installed, built
-  // once by .github/workflows/build-image.yml from .devcontainer/image/.
-  // Starting from it skips the ~6-minute build (mostly compiling Python) and
-  // every install-time download. Pinned by digest: to change any version,
-  // edit .devcontainer/image/ or install-packages.sh, run the workflow, and
-  // paste the digest from its summary here.
-  "image": "ghcr.io/chendaniely/hdsx-workspace@sha256:0d7d8c3392498aeea41b68bbf8fcc3cbd7cf03c1abf8e9ab12bbaeca8b18e8f8",
+  // The course image: rocker's R 4.6.1 tidyverse image with Quarto 1.10.19
+  // (Typst built in), TinyTeX, Python 3.11.17, sess, and every course package
+  // already installed, built once by .github/workflows/build-image.yml from
+  // .devcontainer/image/. Starting from it skips the ~6-minute build (mostly
+  // compiling Python) and every install-time download. Pinned by digest: to
+  // change any version, edit .devcontainer/image/ or install-packages.sh, run
+  // the workflow, and paste the digest from its summary here.
+  "image": "ghcr.io/chendaniely/hdsx-workspace@sha256:c7b56535082228c72533359e422102e344b49590b5220fa9e3e2ac845e4856b4",
 
   "customizations": {
     "vscode": {
