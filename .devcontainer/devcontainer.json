@@ -58,12 +58,21 @@
         // default (httpgd) embeds a forwarded port, which the Codespaces
         // browser client shows as a blank pane.
         "r.plot.backend": "standard",
-        // Preview still renders on save but opens nothing: its side pane comes
-        // up blank for the same reason, and its browser tab lands on "Not
-        // Found" (a forwarded port opens at "/", where quarto preview serves
-        // nothing once _quarto.yml exists). Rendered files are viewed in a
-        // preview tab (the viewer extension above) or through port 8000
-        // (below) instead.
+        // Preview still renders but opens nothing. 🤖 AI edit (Claude),
+        // 2026-10-20: why, as measured in the browser client with Quarto
+        // extension 1.138.0:
+        // - "internal": the side pane frames the forwarded port, whose GitHub
+        //   sign-in cannot load in a frame, so it stays blank.
+        // - "external": the tab opens after the render, not on a click, so
+        //   the browser blocks it as a pop-up; when allowed, Codespaces drops
+        //   the path and it lands on "/", which quarto preview leaves "Not
+        //   Found" once _quarto.yml exists.
+        // - Setting VSCODE_PROXY_URI makes Quarto print the full forwarded
+        //   URL, but then the extension never sees the localhost URL it waits
+        //   for, and opens nothing at all.
+        // Rendered files are viewed in a preview tab (the viewer extension
+        // above) or through port 8000 (below) instead. A browser tab on the
+        // preview port does live-reload, if a student opens it by hand.
         "quarto.render.previewType": "none",
         // 🤖 AI edit (Claude), 2026-10-20: the setting below.
         // Run Cell goes straight to a plain R terminal. Otherwise vscode-R 3.2
