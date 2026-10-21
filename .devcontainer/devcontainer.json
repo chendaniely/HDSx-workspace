@@ -48,7 +48,12 @@
         // forwarded port, so it works in the browser client; plotly, DT and
         // revealjs run (tested in a Codespace). It does not refresh after a
         // re-render: close the tab and click the file again.
-        "analytic-signal.preview-html@1.0.0"
+        "analytic-signal.preview-html@1.0.0",
+        // 🤖 AI edit (Claude), 2026-10-20: the line below.
+        // Leave out R Debugger, which the rocker image adds: unused in the
+        // course, and after a window reload it pops up a warning about the
+        // "legacy r.path" setting.
+        "-RDebugger.r-debugger"
       ],
       "settings": {
         "r.rterm.linux": "/usr/local/bin/R",
@@ -106,11 +111,12 @@
     "8000": { "label": "Rendered reports", "onAutoForward": "silent" }
   },
   // 🤖 AI edit (Claude), 2026-10-20: this setting.
-  // Every Render starts a quarto preview server on a random port. Without
-  // this, each one pops up "Your application ... is available" with an "Open
-  // in Browser" button that lands on "Not Found" and a "Make Public" button
-  // that would expose the workspace. Ports still appear in the Ports tab.
-  "otherPortsAttributes": { "onAutoForward": "silent" },
+  // Every Render starts a quarto preview server on a random port, and R opens
+  // ports of its own. Forwarded, each one pops up "Your application ... is
+  // available" (with "Make Public", which would expose the workspace) and
+  // adds a Ports-tab row whose globe icon lands on "Not Found" or a blank
+  // page. Nothing students use needs them, so only port 8000 is forwarded.
+  "otherPortsAttributes": { "onAutoForward": "ignore" },
   "postAttachCommand": {
     "reports": "python3 -m http.server 8000 --bind 127.0.0.1"
   },
