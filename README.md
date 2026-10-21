@@ -31,23 +31,20 @@ health data.
 
 1. On this repository's GitHub page, click the green **`< > Code`** button →
    **Codespaces** tab → **Create codespace on main**.
-2. Wait a few minutes for the environment to build (R, Quarto, and Python
-   install automatically). The terminal shows **SETUP IN PROGRESS** while it
-   works, then a **TOOLCHAIN SELF-TEST** and **SETUP COMPLETE** when it
-   finishes. Wait for SETUP COMPLETE before running any code.
-   <!-- 🤖 AI edit (Claude), 2026-10-20: the setup progress messages in this step. -->
+2. Wait about 10 minutes while the environment builds (R, Quarto, and Python
+   install automatically). The editor opens only once everything is
+   installed, so you can start as soon as you see it.
+   <!-- 🤖 AI edit (Claude), 2026-10-20: this step. -->
 3. In the file list on the left, open **`practice_report.qmd`**. This root file
    is your Assignment 1 starter.
 4. Save the file, open **View → Command Palette**, and run **Quarto: Render
    Document**. (If a **Render** button appears at the top-right of the editor,
    it does the same thing.) To see the result, click `practice_report.html` in
-   the file list on the left: it opens in a preview tab inside VS Code (a PDF
-   opens the same way). It should show a chart with no red error messages.
-   After each render, close that tab and click the file again.
-   <!-- 🤖 AI edit (Claude), 2026-10-20: the preview tab and the Run Cell note. -->
-   Plots from **Run Cell** appear in a plot tab inside VS Code. Always start R
-   with **Run Cell**, not by typing `R` in a terminal: R started by hand is not
-   connected to VS Code, so its plots cannot show.
+   the file list on the left: it opens in a preview tab inside VS Code. It
+   should show a chart with no red error messages. After each render, close
+   that tab and click the file again. Plots from **Run Cell** appear in a plot
+   tab inside VS Code.
+   <!-- 🤖 AI edit (Claude), 2026-10-20: the preview tab. -->
    To open the result in a full browser tab instead (handy for slides), open
    the **Ports** tab (next to **Terminal**), click the globe icon on the
    **Rendered reports** row, and click `practice_report.html` in the list that

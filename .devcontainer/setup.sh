@@ -11,10 +11,11 @@
 set -uo pipefail
 
 # 🤖 AI edit (Claude), 2026-10-20: this block and the SETUP COMPLETE lines.
-# Codespaces opens the editor while this script is still running. Say so here,
-# at the end, and in any interactive R started before the end: ~/.Rprofile
-# warns while the marker file exists. An interrupted setup keeps the marker, so
-# its incomplete Codespace keeps warning too.
+# "waitFor" in devcontainer.json keeps the editor closed until this script
+# ends. Say where it is anyway, here and at the end, and warn in any
+# interactive R started before the end: ~/.Rprofile warns while the marker
+# file exists. An interrupted setup keeps the marker, so if the editor opens
+# on an incomplete Codespace, it keeps warning.
 SETUP_MARKER="$HOME/.codespace-setup-running"
 touch "$SETUP_MARKER"
 if ! grep -q 'codespace-setup-running' "$HOME/.Rprofile" 2>/dev/null; then
@@ -53,22 +54,36 @@ fi
 # 🤖 AI edit (Claude), 2026-10-20: this block.
 # Only R started by vscode-R (Run Cell, or "R: Create R Terminal") connects to
 # VS Code; vscode-R marks those terminals with SESS_DISCOVERY_FILE. R typed by
-# hand into any other terminal is not connected, and its plots silently go to
-# an empty Rplots.pdf. Make that R say so at startup and refuse to plot, with
-# the fix in the message. Rscript and Quarto renders are not interactive, so
+# hand into any other terminal is not connected, and its plots would go to an
+# empty Rplots.pdf. Instead, that R draws off-screen, and after each command
+# that changed the plot, saves it as a PNG and opens it in a VS Code tab. No
+# message, no Rplots.pdf. Rscript and Quarto renders are not interactive, so
 # they are unaffected.
-if ! grep -q 'not connected to VS Code' "$HOME/.Rprofile" 2>/dev/null; then
+if ! grep -q 'show_plots_in_vscode' "$HOME/.Rprofile" 2>/dev/null; then
   cat >> "$HOME/.Rprofile" <<'EOF'
-# Added by .devcontainer/setup.sh: R started by hand is not connected to VS Code.
+# Added by .devcontainer/setup.sh: show plots from R started by hand.
 if (interactive() && Sys.getenv("TERM_PROGRAM") == "vscode" &&
-    !nzchar(Sys.getenv("SESS_DISCOVERY_FILE"))) {
-  message("\n⚠️  This R is not connected to VS Code, so plots cannot show here.\n",
-          "   Close this terminal (trash-can icon), then click Run Cell above a\n",
-          "   code chunk: that starts an R that is connected.\n")
-  options(device = function(...) stop(
-    "This R is not connected to VS Code. Close this terminal and use Run Cell.",
-    call. = FALSE))
-}
+    !nzchar(Sys.getenv("SESS_DISCOVERY_FILE"))) local({
+  png_file <- file.path(tempdir(), "Rplot.png")
+  shown <- NULL
+  options(device = function(...) {
+    grDevices::pdf(NULL)
+    grDevices::dev.control("enable")
+  })
+  addTaskCallback(function(...) {
+    try(if (grDevices::dev.cur() > 1) {
+      plot_now <- grDevices::recordPlot()
+      if (length(plot_now[[1]]) && !identical(plot_now[[1]], shown)) {
+        shown <<- plot_now[[1]]
+        grDevices::png(png_file, width = 7, height = 5, units = "in", res = 96)
+        grDevices::replayPlot(plot_now)
+        grDevices::dev.off()
+        system2("code", png_file, wait = FALSE)
+      }
+    }, silent = TRUE)
+    TRUE
+  }, name = "show_plots_in_vscode")
+})
 EOF
 fi
 

@@ -60,13 +60,13 @@
         "GitHub.copilot",
         "GitHub.copilot-chat",
         "mechatroner.rainbow-csv@3.24.1",
-        // 🤖 AI edit (Claude), 2026-10-20: the two viewers below.
-        // Clicking a rendered .html or .pdf in the Explorer opens it in an
-        // editor tab, read straight from disk. Unlike the Quarto preview pane,
-        // they use no forwarded port, so they work in the browser client;
-        // plotly, DT and revealjs run (tested in a Codespace).
-        "analytic-signal.preview-html@1.0.0",
-        "mathematic.vscode-pdf@0.2.6"
+        // 🤖 AI edit (Claude), 2026-10-20: the viewer below.
+        // Clicking a rendered .html in the Explorer opens it in an editor tab,
+        // read straight from disk. Unlike the Quarto preview pane, it uses no
+        // forwarded port, so it works in the browser client; plotly, DT and
+        // revealjs run (tested in a Codespace). It does not refresh after a
+        // re-render: close the tab and click the file again.
+        "analytic-signal.preview-html@1.0.0"
       ],
       "settings": {
         "r.rterm.linux": "/usr/local/bin/R",
@@ -78,8 +78,10 @@
         "r.plot.backend": "standard",
         // Preview still renders on save but opens nothing: its side pane comes
         // up blank for the same reason, and its browser tab lands on "Not
-        // Found". Rendered files are viewed in a preview tab (the viewer
-        // extensions above) or through port 8000 (below) instead.
+        // Found" (a forwarded port opens at "/", where quarto preview serves
+        // nothing once _quarto.yml exists). Rendered files are viewed in a
+        // preview tab (the viewer extension above) or through port 8000
+        // (below) instead.
         "quarto.render.previewType": "none",
         // 🤖 AI edit (Claude), 2026-10-20: the setting below.
         // Run Cell goes straight to a plain R terminal. Otherwise vscode-R 3.2
@@ -95,6 +97,10 @@
   // self-tests the toolchain. The leading sed strips stray carriage returns so
   // the script runs even if the file was copied without git's eol=lf handling.
   "postCreateCommand": "sed -i 's/\\r$//' .devcontainer/setup.sh && bash .devcontainer/setup.sh",
+  // 🤖 AI edit (Claude), 2026-10-20: this setting.
+  // Keep the editor closed until setup.sh finishes (about 4 minutes, after the
+  // image build), so no one can start R before its packages and sess are in.
+  "waitFor": "postCreateCommand",
 
   // 🤖 AI edit (Claude), 2026-09-29: this block.
   // Serves the workspace so rendered HTML (and PDF) opens in a browser tab:
@@ -108,6 +114,12 @@
   "portsAttributes": {
     "8000": { "label": "Rendered reports", "onAutoForward": "silent" }
   },
+  // 🤖 AI edit (Claude), 2026-10-20: this setting.
+  // Every Render starts a quarto preview server on a random port. Without
+  // this, each one pops up "Your application ... is available" with an "Open
+  // in Browser" button that lands on "Not Found" and a "Make Public" button
+  // that would expose the workspace. Ports still appear in the Ports tab.
+  "otherPortsAttributes": { "onAutoForward": "silent" },
   "postAttachCommand": {
     "reports": "python3 -m http.server 8000 --bind 127.0.0.1"
   },
