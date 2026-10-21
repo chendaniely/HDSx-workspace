@@ -75,9 +75,10 @@
         // - Setting VSCODE_PROXY_URI makes Quarto print the full forwarded
         //   URL, but then the extension never sees the localhost URL it waits
         //   for, and opens nothing at all.
-        // Rendered files are viewed in a preview tab (the viewer extension
-        // above) or through port 8000 (below) instead. A browser tab on the
-        // preview port does live-reload, if a student opens it by hand.
+        // Rendered HTML is viewed in a preview tab (the viewer extension
+        // above) instead; anything else (PDFs, slides to present or print)
+        // via right-click -> Download. A browser tab on the preview port does
+        // live-reload, if a student opens it by hand.
         "quarto.render.previewType": "none",
         // 🤖 AI edit (Claude), 2026-10-20: the setting below.
         // Run Cell goes straight to a plain R terminal. Otherwise vscode-R 3.2
@@ -98,28 +99,18 @@
   // image), so no one can start R before its packages and sess are in.
   "waitFor": "postCreateCommand",
 
-  // 🤖 AI edit (Claude), 2026-09-29: this block.
-  // Serves the workspace so rendered HTML (and PDF) opens in a browser tab:
-  // Ports tab -> "Rendered reports" -> globe icon -> click the file. The front
-  // page is a file list, because Codespaces always opens a port's front page.
-  // Runs each time VS Code connects, as a foreground server like typing it in a
-  // terminal. (A detached postStartCommand server did not survive startup.)
-  // Bound to 127.0.0.1 so only Codespaces' own forwarding can reach it. It
-  // serves the whole workspace, .git included, so keep the port private.
-  "forwardPorts": [8000],
-  "portsAttributes": {
-    "8000": { "label": "Rendered reports", "onAutoForward": "silent" }
-  },
-  // 🤖 AI edit (Claude), 2026-10-20: this setting.
+  // 🤖 AI edit (Claude), 2026-10-20: this setting, and the removal of the
+  // port-8000 "Rendered reports" server added 2026-09-29 (forwardPorts,
+  // portsAttributes, postAttachCommand). Clicking a rendered .html now opens
+  // it in a tab, and right-click -> Download covers PDFs and slides to present
+  // or print, so the server, its terminal, and its "Make Public" risk (it
+  // served the whole workspace, .git included) are gone.
   // Every Render starts a quarto preview server on a random port, and R opens
   // ports of its own. Forwarded, each one pops up "Your application ... is
   // available" (with "Make Public", which would expose the workspace) and
   // adds a Ports-tab row whose globe icon lands on "Not Found" or a blank
-  // page. Nothing students use needs them, so only port 8000 is forwarded.
+  // page. Nothing students use needs them, so no port is forwarded.
   "otherPortsAttributes": { "onAutoForward": "ignore" },
-  "postAttachCommand": {
-    "reports": "python3 -m http.server 8000 --bind 127.0.0.1"
-  },
 
   "hostRequirements": {
     "cpus": 2,

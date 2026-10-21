@@ -43,17 +43,11 @@ health data.
    the file list on the left: it opens in a preview tab inside VS Code. It
    should show a chart with no red error messages. After each render, close
    that tab and click the file again. Plots from **Run Cell** appear in a plot
-   tab inside VS Code.
-   <!-- 🤖 AI edit (Claude), 2026-10-20: the preview tab. -->
-   To open the result in a full browser tab instead (handy for slides), open
-   the **Ports** tab (next to **Terminal**), click the globe icon on the
-   **Rendered reports** row, and click `practice_report.html` in the list that
-   opens; reload that tab after each render. If that tab is empty or shows an
-   error, run
-   `pkill -f http.server; python3 -m http.server 8000 --bind 127.0.0.1` in the
-   terminal, leave it running, and reload the tab. Never click **Make Public**
-   on this port: anyone with the link could then browse your whole workspace.
-   <!-- 🤖 AI edit (Claude), 2026-09-29: how to view rendered output in this step. -->
+   tab inside VS Code. To open a file in your own browser instead (a PDF, or
+   slides to present full screen or print), right-click it in the file list
+   and choose **Download**.
+   <!-- 🤖 AI edit (Claude), 2026-10-20: the preview tab and Download; the
+   port-8000 browser-tab steps are gone with the server. -->
 5. Make the Assignment 1 edits, render again, then commit both
    `practice_report.qmd` and `practice_report.html` and sync your work.
 
