@@ -39,6 +39,9 @@
     // compiles CPython from source (about 4 minutes), which is the main reason
     // to build the image once instead of in every Codespace. installTools off:
     // the feature's linters (pylint, black, ...) are unused in the course.
+    // NEXT TERM: bump Python to a current release (3.13+); 3.11's security
+    // support ends October 2027. Then regenerate constraints.txt for the new
+    // version (command in its header) and rebuild the image.
     "ghcr.io/devcontainers/features/python:1.8.0": {
       "version": "3.11.17",
       "installTools": false
