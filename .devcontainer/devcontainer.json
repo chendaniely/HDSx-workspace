@@ -59,7 +59,14 @@
         "ms-toolsai.jupyter",
         "GitHub.copilot",
         "GitHub.copilot-chat",
-        "mechatroner.rainbow-csv@3.24.1"
+        "mechatroner.rainbow-csv@3.24.1",
+        // 🤖 AI edit (Claude), 2026-10-20: the two viewers below.
+        // Clicking a rendered .html or .pdf in the Explorer opens it in an
+        // editor tab, read straight from disk. Unlike the Quarto preview pane,
+        // they use no forwarded port, so they work in the browser client;
+        // plotly, DT and revealjs run (tested in a Codespace).
+        "analytic-signal.preview-html@1.0.0",
+        "mathematic.vscode-pdf@0.2.6"
       ],
       "settings": {
         "r.rterm.linux": "/usr/local/bin/R",
@@ -71,7 +78,8 @@
         "r.plot.backend": "standard",
         // Preview still renders on save but opens nothing: its side pane comes
         // up blank for the same reason, and its browser tab lands on "Not
-        // Found". Rendered files are viewed through port 8000 instead (below).
+        // Found". Rendered files are viewed in a preview tab (the viewer
+        // extensions above) or through port 8000 (below) instead.
         "quarto.render.previewType": "none",
         // 🤖 AI edit (Claude), 2026-10-20: the setting below.
         // Run Cell goes straight to a plain R terminal. Otherwise vscode-R 3.2

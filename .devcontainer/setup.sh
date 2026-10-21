@@ -50,6 +50,28 @@ options(repos = c(CRAN = "$CRAN_SNAPSHOT"))
 EOF
 fi
 
+# 🤖 AI edit (Claude), 2026-10-20: this block.
+# Only R started by vscode-R (Run Cell, or "R: Create R Terminal") connects to
+# VS Code; vscode-R marks those terminals with SESS_DISCOVERY_FILE. R typed by
+# hand into any other terminal is not connected, and its plots silently go to
+# an empty Rplots.pdf. Make that R say so at startup and refuse to plot, with
+# the fix in the message. Rscript and Quarto renders are not interactive, so
+# they are unaffected.
+if ! grep -q 'not connected to VS Code' "$HOME/.Rprofile" 2>/dev/null; then
+  cat >> "$HOME/.Rprofile" <<'EOF'
+# Added by .devcontainer/setup.sh: R started by hand is not connected to VS Code.
+if (interactive() && Sys.getenv("TERM_PROGRAM") == "vscode" &&
+    !nzchar(Sys.getenv("SESS_DISCOVERY_FILE"))) {
+  message("\n⚠️  This R is not connected to VS Code, so plots cannot show here.\n",
+          "   Close this terminal (trash-can icon), then click Run Cell above a\n",
+          "   code chunk: that starts an R that is connected.\n")
+  options(device = function(...) stop(
+    "This R is not connected to VS Code. Close this terminal and use Run Cell.",
+    call. = FALSE))
+}
+EOF
+fi
+
 # 🤖 AI edit (Claude), 2026-09-29, revised 2026-10-20: this block, its place
 # first in the script, and the sess self-test line.
 # sess connects R terminals to the VS Code R extension, which is how plots and
