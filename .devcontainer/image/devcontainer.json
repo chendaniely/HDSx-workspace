@@ -20,11 +20,14 @@
 
   // Each feature pinned to an exact release.
   "features": {
-    // Quarto CLI (bundles its own pandoc and Typst). TinyTeX off on purpose:
-    // students render HTML, not PDF.
+    // Quarto CLI (bundles its own pandoc and Typst).
+    // 🤖 AI edit (Claude), 2026-10-20: TinyTeX on (was off). "Quarto: Render
+    // Document" offers PDF via LaTeX next to HTML, and without TinyTeX that
+    // choice failed. Installed as the Codespace user, once, at image build.
+    // PDF via Typst needs nothing extra. smoke-test.sh renders both.
     "ghcr.io/rocker-org/devcontainer-features/quarto-cli:1.1.5": {
       "version": "1.10.19",
-      "installTinyTeX": "false"
+      "installTinyTeX": "true"
     },
     // Python for the Week 5 polyglot demo. On this base image the feature
     // compiles CPython from source (about 4 minutes), which is the main reason

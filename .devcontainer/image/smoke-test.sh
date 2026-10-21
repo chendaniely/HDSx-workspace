@@ -37,6 +37,13 @@ assert not bad, bad
 EOF'
 out=$(mktemp -d)
 check "practice_report.qmd renders" "quarto render practice_report.qmd --output-dir '$out' --quiet"
+check "a PDF renders through Typst" "quarto render practice_report.qmd --to typst --output-dir '$out/typst' --quiet && test -s '$out/typst/practice_report.pdf'"
+tlmgr=$(ls -d "$HOME"/.TinyTeX/bin/*/tlmgr 2>/dev/null | head -n 1)
+latex_before=$("${tlmgr:-false}" info --only-installed --data name 2>/dev/null | wc -l)
+check "a PDF renders through LaTeX (TinyTeX)" "quarto render practice_report.qmd --to pdf --output-dir '$out/latex' --quiet && test -s '$out/latex/practice_report.pdf'"
+latex_after=$("${tlmgr:-false}" info --only-installed --data name 2>/dev/null | wc -l)
+echo "LaTeX packages: $latex_before before the PDF render, $latex_after after" \
+     "(any difference was downloaded during the render, so not in the image)"
 check "a Python chunk renders through Jupyter" "printf -- '---\ntitle: py\n---\n\n\`\`\`{python}\nimport pandas as pd\nprint(pd.__version__)\n\`\`\`\n' > '$out/py.qmd' && quarto render '$out/py.qmd' --quiet"
 
 exit $fail
