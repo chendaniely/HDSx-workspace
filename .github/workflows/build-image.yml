@@ -7,7 +7,8 @@
 # Each run and re-run gets its own tag (build-<run>-<attempt>), so a re-run
 # never moves a tag that a pinned digest was taken from. Rebuilds are not
 # byte-identical (newer apt and TinyTeX files), which is why Codespaces pin
-# the digest: keep pinned versions in the registry, don't prune them.
+# the digest: keep pinned versions in the registry, don't prune them. The
+# package must stay public: every student's Codespace pulls it anonymously.
 name: Build course image
 
 on:
