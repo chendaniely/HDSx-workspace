@@ -10,35 +10,16 @@
   // ---------------------------------------------------------------------------
   "name": "SPPH 381H workspace (R + Quarto + Python)",
 
-  // rocker "tidyverse" ships R + the whole tidyverse + the system libraries
-  // students need, so renders work out of the box.
-  // 🤖 AI edit (Claude), 2026-10-20: pinned by digest (was ":4", which moves
-  // whenever rocker publishes a new R release). This is the R 4.6.1 image
-  // built 2026-07-06. install-packages.sh installs extra R packages from the
-  // CRAN snapshot of that same date: bump the two together.
-  "image": "ghcr.io/rocker-org/devcontainer/tidyverse@sha256:3a9ecbed900f17da528cdb17c3ddc43045fc9b4be7dbd8c61cb7b8a6439bfa6b",
-
-  // 🤖 AI edit (Claude), 2026-10-20: each feature pinned to an exact release
-  // (was ":1", which takes the newest 1.x at build time).
-  "features": {
-    // Quarto CLI (bundles its own pandoc). HTML rendering works immediately.
-    // TinyTeX off on purpose: students render HTML, not PDF.
-    // 🤖 AI edit (Claude), 2026-10-20: pinned (was "release") so every
-    // Codespace made this term renders with the same Quarto.
-    "ghcr.io/rocker-org/devcontainer-features/quarto-cli:1.1.5": {
-      "version": "1.10.19",
-      "installTinyTeX": "false"
-    },
-    // Python 3.11 for the Week 5 polyglot demo.
-    // 🤖 AI edit (Claude), 2026-10-20: exact Python release (was "3.11", the
-    // newest 3.11.x at build time). installTools off: the feature's linters
-    // (pylint, black, ...) are unused in the course and were the last unpinned
-    // Python downloads in the build.
-    "ghcr.io/devcontainers/features/python:1.8.0": {
-      "version": "3.11.17",
-      "installTools": false
-    }
-  },
+  // 🤖 AI edit (Claude), 2026-10-20: this "image" (was the rocker image plus
+  // the Quarto and Python features, built in every new Codespace).
+  // The course image: rocker's R 4.6.1 tidyverse image with Quarto 1.10.19,
+  // Python 3.11.17, sess, and every course package already installed, built
+  // once by .github/workflows/build-image.yml from .devcontainer/image/.
+  // Starting from it skips the ~6-minute build (mostly compiling Python) and
+  // every install-time download. Pinned by digest: to change any version,
+  // edit .devcontainer/image/ or install-packages.sh, run the workflow, and
+  // paste the digest from its summary here.
+  "image": "ghcr.io/chendaniely/hdsx-workspace@sha256:0d7d8c3392498aeea41b68bbf8fcc3cbd7cf03c1abf8e9ab12bbaeca8b18e8f8",
 
   "customizations": {
     "vscode": {
@@ -99,8 +80,8 @@
   // the script runs even if the file was copied without git's eol=lf handling.
   "postCreateCommand": "sed -i 's/\\r$//' .devcontainer/setup.sh .devcontainer/install-packages.sh && bash .devcontainer/setup.sh",
   // 🤖 AI edit (Claude), 2026-10-20: this setting.
-  // Keep the editor closed until setup.sh finishes (about 4 minutes, after the
-  // image build), so no one can start R before its packages and sess are in.
+  // Keep the editor closed until setup.sh finishes (seconds with the course
+  // image), so no one can start R before its packages and sess are in.
   "waitFor": "postCreateCommand",
 
   // 🤖 AI edit (Claude), 2026-09-29: this block.

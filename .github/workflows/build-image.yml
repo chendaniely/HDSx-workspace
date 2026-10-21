@@ -43,8 +43,24 @@ jobs:
           push: always
           runCmd: bash .devcontainer/image/smoke-test.sh
 
+  # devcontainers/ci pushes in its post step, at the end of the build job, so
+  # the pushed digest can only be read from a later job.
+  report:
+    needs: build
+    runs-on: ubuntu-24.04
+    env:
+      IMAGE: ghcr.io/${{ github.repository_owner }}/hdsx-workspace
+      TAG: build-${{ github.run_number }}
+    steps:
+      - uses: docker/login-action@v4.6.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Report the digest to pin
         run: |
+          set -euo pipefail
           digest=$(docker buildx imagetools inspect "$IMAGE:$TAG" --format '{{json .Manifest}}' | jq -r .digest)
           {
             echo "### Course image built"
