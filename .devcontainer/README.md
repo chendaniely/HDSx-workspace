@@ -1,12 +1,13 @@
 # Course Codespace: maintainer notes
 
-<!-- 🤖 AI edit (Claude), 2026-10-20: this file. -->
+<!-- 🤖 AI edit (Claude), 2026-10-20/21: this file. -->
 
 For instructors and TAs who maintain the SPPH 381H student Codespace. Students
 don't need this file; their steps are in the top-level `README.md`.
 
-Everything under "What students see" and "Findings" was checked on 2026-10-20 in
-fresh Codespaces opened in the browser (Chrome), the way students open them.
+Everything under "What students see" and "Findings" was checked on 2026-10-20
+and 21 in fresh Codespaces opened in the browser (Chrome), the way students
+open them.
 The commit messages on this folder record each decision and its reasons.
 
 ## How it fits together
@@ -70,6 +71,15 @@ The commit messages on this folder record each decision and its reasons.
   (`/usr/local/python/current/bin/python`). The option marked *Recommended*,
   "Create Python Environment", makes an empty environment without pandas, and
   Python 3.12.3 (`/usr/bin/python3`) is the system Python, also without pandas.
+- **Left as they are, to keep customizations minimal** (Dan, 2026-10-21:
+  "let's leave minimal customizations"): while a rendered `.html` is open,
+  Problems shows one CSS warning from Quarto's own output ("Do not use empty
+  rulesets") and the file name turns yellow. Notifications also wait under the
+  bell: install the GitHub Actions extension (suggested for
+  `build-image.yml`), "periodically run git fetch?", and Mathematic's donation
+  notice. Untested settings that would hide the first three:
+  `html.validate.styles: false`, `git.autofetch: true`,
+  `extensions.ignoreRecommendations: true`.
 
 ## Findings: what doesn't work in the browser client, and why
 
