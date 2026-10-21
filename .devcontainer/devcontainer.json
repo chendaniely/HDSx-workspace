@@ -11,31 +11,46 @@
   "name": "SPPH 381H workspace (R + Quarto + Python)",
 
   // rocker "tidyverse" ships R + the whole tidyverse + the system libraries
-  // students need, so renders work out of the box. Pin the major version.
-  "image": "ghcr.io/rocker-org/devcontainer/tidyverse:4",
+  // students need, so renders work out of the box.
+  // 🤖 AI edit (Claude), 2026-10-20: pinned by digest (was ":4", which moves
+  // whenever rocker publishes a new R release). This is the R 4.6.1 image
+  // built 2026-07-06. setup.sh installs extra R packages from the CRAN
+  // snapshot of that same date: bump the two together.
+  "image": "ghcr.io/rocker-org/devcontainer/tidyverse@sha256:3a9ecbed900f17da528cdb17c3ddc43045fc9b4be7dbd8c61cb7b8a6439bfa6b",
 
+  // 🤖 AI edit (Claude), 2026-10-20: each feature pinned to an exact release
+  // (was ":1", which takes the newest 1.x at build time).
   "features": {
     // Quarto CLI (bundles its own pandoc). HTML rendering works immediately.
     // TinyTeX off on purpose: students render HTML, not PDF.
     // 🤖 AI edit (Claude), 2026-10-20: pinned (was "release") so every
     // Codespace made this term renders with the same Quarto.
-    "ghcr.io/rocker-org/devcontainer-features/quarto-cli:1": {
+    "ghcr.io/rocker-org/devcontainer-features/quarto-cli:1.1.5": {
       "version": "1.10.19",
       "installTinyTeX": "false"
     },
     // Python 3.11 for the Week 5 polyglot demo.
-    "ghcr.io/devcontainers/features/python:1": {
-      "version": "3.11"
+    // 🤖 AI edit (Claude), 2026-10-20: exact Python release (was "3.11", the
+    // newest 3.11.x at build time). installTools off: the feature's linters
+    // (pylint, black, ...) are unused in the course and were the last unpinned
+    // Python downloads in the build.
+    "ghcr.io/devcontainers/features/python:1.8.0": {
+      "version": "3.11.17",
+      "installTools": false
     }
   },
 
   "customizations": {
     "vscode": {
-      // 🤖 AI edit (Claude), 2026-10-20: the three version pins below.
+      // 🤖 AI edit (Claude), 2026-10-20: the four version pins below.
       // An extension installed at a stated version does not auto-update, so
       // the whole term runs on these releases (no pre-release builds). vscode-R
       // must match the sess that setup.sh installs from the same release: bump
       // both together. r-syntax is a dependency vscode-R 3.x pulls in.
+      // The Python, Jupyter and Copilot extensions stay unpinned on purpose:
+      // they use VS Code's proposed APIs, which change between VS Code
+      // releases, and Codespaces always runs the newest VS Code, so an old
+      // pinned copy could stop loading.
       "extensions": [
         "quarto.quarto@1.138.0",
         "REditorSupport.r@3.2.0",
@@ -44,7 +59,7 @@
         "ms-toolsai.jupyter",
         "GitHub.copilot",
         "GitHub.copilot-chat",
-        "mechatroner.rainbow-csv"
+        "mechatroner.rainbow-csv@3.24.1"
       ],
       "settings": {
         "r.rterm.linux": "/usr/local/bin/R",

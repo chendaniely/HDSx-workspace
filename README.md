@@ -66,10 +66,14 @@ source, outputs, and rendered files requested by the assignment.
 
 The Codespace is the course dependency baseline. Its R package list is in
 `.devcontainer/setup.sh`; its Python packages are declared in
-`.devcontainer/requirements.txt`. Do not initialize `renv`. If you add a
-package with instructor approval, document it in the assignment dependency note
-and update the appropriate devcontainer list so a fresh Codespace can install
-it.
+`.devcontainer/requirements.txt`. Every version is pinned for the term, so a
+Codespace made in December matches one made today: R packages come from a dated
+CRAN snapshot (also what `install.packages()` uses inside the Codespace), and
+Python versions are fixed in `.devcontainer/constraints.txt`. Do not initialize
+`renv`. If you add a package with instructor approval, document it in the
+assignment dependency note and update the appropriate devcontainer list so a
+fresh Codespace can install it.
+<!-- 🤖 AI edit (Claude), 2026-10-20: the sentences on pinned versions. -->
 
 ## Important
 

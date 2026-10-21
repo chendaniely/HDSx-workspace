@@ -33,6 +33,23 @@ echo "   Wait for SETUP COMPLETE at the end of this log before"
 echo "   running code."
 echo "=========================================================="
 
+# 🤖 AI edit (Claude), 2026-10-20: this block and every use of CRAN_SNAPSHOT.
+# R packages come from Posit's CRAN snapshot of the day the base image was
+# built (see "image" in devcontainer.json), so a Codespace made in December
+# gets the same versions as one made today, all of them consistent with the
+# tidyverse already in the image. The snapshot serves Linux binaries, so
+# nothing compiles. ~/.Rprofile points install.packages() at it too, so a
+# package a student adds matches the ones already installed. Python packages
+# are pinned by constraints.txt, resolved for the same date. Bump all three
+# together.
+export CRAN_SNAPSHOT="https://p3m.dev/cran/__linux__/noble/2026-07-06"
+if ! grep -q 'CRAN snapshot' "$HOME/.Rprofile" 2>/dev/null; then
+  cat >> "$HOME/.Rprofile" <<EOF
+# Added by .devcontainer/setup.sh: install packages from the course's CRAN snapshot.
+options(repos = c(CRAN = "$CRAN_SNAPSHOT"))
+EOF
+fi
+
 # 🤖 AI edit (Claude), 2026-09-29, revised 2026-10-20: this block, its place
 # first in the script, and the sess self-test line.
 # sess connects R terminals to the VS Code R extension, which is how plots and
@@ -60,7 +77,7 @@ Rscript -e '
   pkg <- file.path(tempdir(), bundled)
   imports <- strsplit(read.dcf(file.path(pkg, "DESCRIPTION"), "Imports"), ",")[[1]]
   need <- setdiff(trimws(sub("[(].*", "", imports)), rownames(installed.packages()))
-  if (length(need)) install.packages(need, repos = "https://cloud.r-project.org")
+  if (length(need)) install.packages(need, repos = Sys.getenv("CRAN_SNAPSHOT"))
   install.packages(pkg, repos = NULL, type = "source")
 '
 
@@ -68,14 +85,14 @@ echo "==> Installing extra R packages (Table 1, dashboards, optional demos)..."
 Rscript -e '
   pkgs <- c("gt", "gtsummary", "DT", "janitor", "scales", "plotly", "shiny", "reticulate")
   need <- setdiff(pkgs, rownames(installed.packages()))
-  if (length(need)) install.packages(need, repos = "https://cloud.r-project.org")
+  if (length(need)) install.packages(need, repos = Sys.getenv("CRAN_SNAPSHOT"))
   have <- intersect(pkgs, rownames(installed.packages()))
   cat("R extras present:", paste(have, collapse = ", "), "\n")
 '
 
 echo "==> Installing Python packages (Week 5 polyglot / reticulate demo)..."
-python3 -m pip install --upgrade pip >/dev/null
-python3 -m pip install -r .devcontainer/requirements.txt
+python3 -m pip install "pip==26.1.2" >/dev/null
+python3 -m pip install -r .devcontainer/requirements.txt -c .devcontainer/constraints.txt
 
 echo ""
 echo "=================== TOOLCHAIN SELF-TEST ==================="
