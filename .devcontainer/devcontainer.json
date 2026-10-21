@@ -7,6 +7,8 @@
   // VS Code extensions automatically -- nothing to install by hand. It starts
   // from the HDSx course book's setup, with every version pinned for the term.
   // (The HDSx book is a separate, read-only repository; students work HERE.)
+  // Maintainers: how to change versions, and what was tested and why, are in
+  // .devcontainer/README.md.
   // ---------------------------------------------------------------------------
   "name": "SPPH 381H workspace (R + Quarto + Python)",
 
