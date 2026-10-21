@@ -24,7 +24,7 @@
 
   "customizations": {
     "vscode": {
-      // 🤖 AI edit (Claude), 2026-10-20: the five version pins below.
+      // 🤖 AI edit (Claude), 2026-10-20: the six version pins below.
       // An extension installed at a stated version does not auto-update, and
       // it wins over the unpinned copy the image's own metadata asks for
       // (checked in fresh Codespaces), so the whole term runs on these
@@ -52,6 +52,14 @@
         // revealjs run (tested in a Codespace). It does not refresh after a
         // re-render: close the tab and click the file again.
         "analytic-signal.preview-html@1.0.0",
+        // 🤖 AI edit (Claude), 2026-10-20: the PDF viewer below.
+        // Clicking a .pdf (e.g. a Typst render) opens it in a tab (tested in a
+        // Codespace). VS Code has no built-in PDF viewer. The others fail in
+        // the browser client: tomoki1207.pdf is UI-only (no web build), and
+        // AdamRaichu.pdf-viewer never finishes loading on first open and is
+        // very slow after that. Cost: a one-time donation notice in each new
+        // Codespace, with no setting to turn it off.
+        "mathematic.vscode-pdf@0.2.6",
         // 🤖 AI edit (Claude), 2026-10-20: the line below.
         // Leave out R Debugger, which the rocker image adds: unused in the
         // course, and after a window reload it pops up a warning about the
@@ -78,9 +86,10 @@
         // - Setting VSCODE_PROXY_URI makes Quarto print the full forwarded
         //   URL, but then the extension never sees the localhost URL it waits
         //   for, and opens nothing at all.
-        // Rendered HTML is viewed in a preview tab (the viewer extension
-        // above) instead; anything else (PDFs, slides to present or print)
-        // via right-click -> Download. (A browser tab on the preview port does
+        // Rendered HTML and PDF are viewed in tabs (the viewer extensions
+        // above) instead; slides to present or print go to the student's own
+        // browser via right-click -> Download. (A browser tab on the preview
+        // port does
         // live-reload, but no port is forwarded (otherPortsAttributes below)
         // and the port changes with every preview.)
         "quarto.render.previewType": "none",
@@ -108,10 +117,10 @@
 
   // 🤖 AI edit (Claude), 2026-10-20: this setting, and the removal of the
   // port-8000 "Rendered reports" server added 2026-09-29 (forwardPorts,
-  // portsAttributes, postAttachCommand). Clicking a rendered .html now opens
-  // it in a tab, and right-click -> Download covers PDFs and slides to present
-  // or print, so the server, its terminal, and its "Make Public" risk (it
-  // served the whole workspace, .git included) are gone.
+  // portsAttributes, postAttachCommand). Clicking a rendered .html or .pdf now
+  // opens it in a tab, and right-click -> Download covers slides to present or
+  // print, so the server, its terminal, and its "Make Public" risk (it served
+  // the whole workspace, .git included) are gone.
   // The Preview button (quarto preview) starts a server on a random port, and
   // R opens ports of its own. Forwarded, each one pops up "Your application ... is
   // available" (with "Make Public", which would expose the workspace) and

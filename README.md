@@ -44,14 +44,16 @@ health data.
    opens in a preview tab inside VS Code. It
    should show a chart with no red error messages. After each render, close
    that tab and click the file again. Plots from **Run Cell** appear in a plot
-   tab inside VS Code. To open a file in your own browser instead (a PDF, or
-   slides to present full screen or print), right-click it in the file list
-   and choose **Download**.
+   tab inside VS Code.
    For a PDF, run **Quarto: Render Document** and choose **Render PDF
    (Typst)**. Typst comes with Quarto, is fast, and keeps characters such as
-   Greek letters and emoji that the LaTeX option can silently drop.
-   <!-- 🤖 AI edit (Claude), 2026-10-20: the preview tab and Download (the
-   port-8000 browser-tab steps are gone with the server), and Typst for PDF. -->
+   Greek letters and emoji that the LaTeX option can silently drop. Click the
+   PDF in the file list to see it in a tab, just like the HTML. To open a file
+   in your own browser instead (for example, slides to present full screen or
+   print), right-click it in the file list and choose **Download**.
+   <!-- 🤖 AI edit (Claude), 2026-10-20: the preview tabs (HTML and PDF),
+   Typst for PDF, and Download (the port-8000 browser-tab steps are gone with
+   the server). -->
 5. Make the Assignment 1 edits, render again, then commit both
    `practice_report.qmd` and `practice_report.html` and sync your work.
 
