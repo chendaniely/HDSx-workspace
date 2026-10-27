@@ -31,25 +31,40 @@ health data.
 
 1. On this repository's GitHub page, click the green **`< > Code`** button →
    **Codespaces** tab → **Create codespace on main**.
-2. Wait a few minutes for the environment to build (R, Quarto, and Python
-   install automatically). The terminal shows **SETUP IN PROGRESS** while it
-   works, then a **TOOLCHAIN SELF-TEST** and **SETUP COMPLETE** when it
-   finishes. Wait for SETUP COMPLETE before running any code.
-   <!-- 🤖 AI edit (Claude), 2026-10-20: the setup progress messages in this step. -->
+2. Wait about 5 minutes while the Codespace starts. R, Quarto, and Python come
+   preinstalled, and the editor opens once they are. VS Code then takes a few
+   more seconds to load its tools. It's ready when:
+   - you've answered the **"Do you trust the authors of the files in this
+     folder?"** box with **Trust Folder & Continue** (until then the bottom bar
+     says **Restricted Mode** and the Quarto and R tools stay switched off);
+   - the bottom bar no longer says **Activating Extensions…** and shows
+     **Quarto** with a version number;
+   - in a `.qmd` file, **Run Cell** appears above each R code chunk.
+
+   If that hasn't happened after a couple of minutes, open **View → Command
+   Palette**, run **Codespaces: View Creation Log**, and send the log to the
+   instructor.
+   <!-- 🤖 AI edit (Claude), 2026-10-20/21: this step and its readiness
+   checks. -->
 3. In the file list on the left, open **`practice_report.qmd`**. This root file
    is your Assignment 1 starter.
-4. Save the file, open **View → Command Palette**, and run **Quarto: Render
-   Document**. (If a **Render** button appears at the top-right of the editor,
-   it does the same thing.) To see the result, open the **Ports** tab (next to
-   **Terminal**), click the globe icon on the **Rendered reports** row, and
-   click `practice_report.html` in the list that opens. It should show a chart
-   with no red error messages. Keep that browser tab open and reload it after
-   each render. Plots from **Run Cell** appear in a plot tab inside VS Code.
-   If that tab is empty or shows an error, run
-   `pkill -f http.server; python3 -m http.server 8000 --bind 127.0.0.1` in the
-   terminal, leave it running, and reload the tab. Never click **Make Public**
-   on this port: anyone with the link could then browse your whole workspace.
-   <!-- 🤖 AI edit (Claude), 2026-09-29: how to view rendered output in this step. -->
+4. Save the file, open **View → Command Palette**, run **Quarto: Render
+   Document**, and choose **Render HTML**. (The **Preview** button at the
+   top-right of the editor renders it too, without that menu.) To see the
+   result, click `practice_report.html` in the file list on the left: it
+   opens in a preview tab inside VS Code. It
+   should show a chart with no red error messages. After each render, close
+   that tab and click the file again. Plots from **Run Cell** appear in a plot
+   tab inside VS Code.
+   For a PDF, run **Quarto: Render Document** and choose **Render PDF
+   (Typst)**. Typst comes with Quarto, is fast, and keeps characters such as
+   Greek letters and emoji that the LaTeX option can silently drop. Click the
+   PDF in the file list to see it in a tab, just like the HTML. To open a file
+   in your own browser instead (for example, slides to present full screen or
+   print), right-click it in the file list and choose **Download**.
+   <!-- 🤖 AI edit (Claude), 2026-10-20: the preview tabs (HTML and PDF),
+   Typst for PDF, and Download (the port-8000 browser-tab steps are gone with
+   the server). -->
 5. Make the Assignment 1 edits, render again, then commit both
    `practice_report.qmd` and `practice_report.html` and sync your work.
 
@@ -65,11 +80,17 @@ Do not add a global `*.html` or `*.pdf` rule to `.gitignore`. Stage only the
 source, outputs, and rendered files requested by the assignment.
 
 The Codespace is the course dependency baseline. Its R package list is in
-`.devcontainer/setup.sh`; its Python packages are declared in
-`.devcontainer/requirements.txt`. Do not initialize `renv`. If you add a
-package with instructor approval, document it in the assignment dependency note
-and update the appropriate devcontainer list so a fresh Codespace can install
-it.
+`.devcontainer/install-packages.sh`; its Python packages are declared in
+`.devcontainer/requirements.txt`. Every package version is pinned for the
+term, so a Codespace made in December matches one made today: R packages come
+from a dated CRAN snapshot (also what `install.packages()` uses inside the
+Codespace, so packages released after that date are not available; ask the
+instructor if you need one), and Python versions are fixed in
+`.devcontainer/constraints.txt`. Do not initialize
+`renv`. If you add a package with instructor approval, document it in the
+assignment dependency note and update the appropriate devcontainer list so a
+fresh Codespace can install it.
+<!-- 🤖 AI edit (Claude), 2026-10-20: the sentences on pinned versions. -->
 
 ## Important
 

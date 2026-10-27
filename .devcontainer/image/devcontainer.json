@@ -1,0 +1,31 @@
+{
+  // 🤖 AI edit (Claude), 2026-10-20: this file.
+  // Recipe for the course image, not a Codespace config:
+  // .github/workflows/build-image.yml builds it, and .devcontainer/devcontainer.json
+  // starts every Codespace from the result. How to change a version:
+  // .devcontainer/README.md.
+
+  // rocker "tidyverse", R 4.6.1, built 2026-07-06. Bump it together with the
+  // CRAN snapshot date in install-packages.sh.
+  "image": "ghcr.io/rocker-org/devcontainer/tidyverse@sha256:3a9ecbed900f17da528cdb17c3ddc43045fc9b4be7dbd8c61cb7b8a6439bfa6b",
+
+  "features": {
+    // Quarto (with pandoc and Typst). TinyTeX so "Render PDF (LaTeX)" works;
+    // the course steers PDFs to Typst (README: PDF rendering).
+    "ghcr.io/rocker-org/devcontainer-features/quarto-cli:1.1.5": {
+      "version": "1.10.19",
+      "installTinyTeX": "true"
+    },
+    // Python for the Week 5 polyglot demo. This feature compiles it from
+    // source (about 4 minutes), the main reason to prebuild the image.
+    // NEXT TERM: bump Python to a current release (3.13+); 3.11's security
+    // support ends October 2027. Then regenerate constraints.txt for the new
+    // version (command in its header) and rebuild the image.
+    "ghcr.io/devcontainers/features/python:1.8.0": {
+      "version": "3.11.17",
+      "installTools": false
+    },
+    // R packages, sess and Python packages: runs ../install-packages.sh.
+    "./course-packages": {}
+  }
+}

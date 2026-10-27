@@ -1,0 +1,44 @@
+# 🤖 AI edit (Claude), 2026-10-20: this file.
+# Builds the course image from .devcontainer/image/, checks that it renders
+# the practice report, and pushes it to ghcr.io/<repository owner>/hdsx-workspace
+# as tag build-<run>-<attempt>. Run it by hand (Actions -> "Build course
+# image"), then pin the new digest: .devcontainer/README.md, "Changing a
+# version". Keep the package public (students pull it anonymously) and don't
+# prune old versions (pinned digests point at them).
+name: Build course image
+
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v7.0.1
+
+      - uses: docker/login-action@v4.6.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # A feature only sees its own folder.
+      - name: Copy the install script and package lists into the image feature
+        run: >
+          cp .devcontainer/install-packages.sh .devcontainer/requirements.txt
+          .devcontainer/constraints.txt .devcontainer/image/course-packages/
+
+      # The push happens only if the render check passes.
+      - name: Build, check, and push
+        uses: devcontainers/ci@v0.3.1900000450
+        with:
+          configFile: .devcontainer/image/devcontainer.json
+          imageName: ghcr.io/${{ github.repository_owner }}/hdsx-workspace
+          imageTag: build-${{ github.run_number }}-${{ github.run_attempt }}
+          push: always
+          runCmd: quarto render practice_report.qmd && quarto render practice_report.qmd --to typst
