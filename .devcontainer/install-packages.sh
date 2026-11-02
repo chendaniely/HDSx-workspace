@@ -103,7 +103,8 @@ Rscript -e '
 
 echo "==> Installing extra R packages (Table 1, dashboards, optional demos)..."
 Rscript -e '
-  pkgs <- c("gt", "gtsummary", "DT", "janitor", "scales", "plotly", "shiny", "reticulate")
+  pkgs <- c("gt", "gtsummary", "DT", "janitor", "scales", "plotly", "shiny", "reticulate",
+            "medicaldata", "tidymodels")
   need <- setdiff(pkgs, rownames(installed.packages()))
   if (length(need)) install.packages(need, repos = Sys.getenv("CRAN_SNAPSHOT"))
   have <- intersect(pkgs, rownames(installed.packages()))
